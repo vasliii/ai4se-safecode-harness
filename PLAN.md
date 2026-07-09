@@ -22,7 +22,7 @@
 
 ## Phase 0：工程初始化
 
-### Task 0.1：Python 项目脚手架
+### Task 0.1：Python 项目脚手架 （已完成）
 
 ### Goal
 初始化 Python 项目结构，包括依赖管理、pytest 配置和 `safecode` 包骨架。
