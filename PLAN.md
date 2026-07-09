@@ -30,6 +30,8 @@
 ### Files
 - 创建：`pyproject.toml`
 - 创建：`safecode/__init__.py`
+- 创建：`safecode/cli/__init__.py`
+- 创建：`safecode/cli/main.py`
 - 创建：`safecode/models/__init__.py`
 - 创建：`tests/__init__.py`
 - 创建：`tests/conftest.py`
@@ -46,6 +48,7 @@
 - `conftest.py` 必须提供 fixture `tmp_workspace`：创建临时目录（含示例文件），测试后清理
 - `.gitignore` 已覆盖 Python 产物、密钥、IDE 文件；确认是否充分
 - 包必须可通过 `pip install -e .` 安装
+- CLI 初始阶段只提供最小入口，用于验证项目安装和命令启动。具体命令功能在后续 CLI 阶段实现。
 
 ### Tests
 - **test_package_imports.py**：验证 `safecode` 及其子包的导入正常
