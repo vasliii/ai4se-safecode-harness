@@ -63,3 +63,51 @@
   - 根据执行结果，原PLAN.md中描述存在5处歧义/表述不清
 - 人工及AI辅助修改：
   - 修正PLAN.md中所有歧义内容
+
+## 2026-7-10 Task 4.0.1 项目初始化（Project Initialization）
+
+- Superpowers：
+  - using-git-worktrees
+  - verification-before-completion
+
+- 当前上下文：
+  - 项目已完成 SPEC.md、PLAN.md、SPEC_PROCESS.md 编写；
+  - 已完成冷启动验证并修正规划阶段发现的问题；
+  - 当前进入 Implementation Workflow；
+  - 使用独立 worktree：
+    - 分支：task/0.1-project-init
+    - 工作目录：ai4se-safecode-harness-task-0.1
+
+- 人工决策：
+  - 按照 PLAN.md 执行 Task 0.1；
+  - 使用隔离开发分支完成项目初始化，避免直接修改 main 分支；
+  - 保持 Task 0.1 范围最小化，不提前实现后续模块。
+
+- 人工判断：
+  - Task 0.1 的目标是建立可运行的 Python 项目基础结构；
+  - 不应包含 Agent Loop、LLM 接入、工具系统、治理机制等后续功能；
+  - 采用 TDD 流程验证项目初始化结果。
+
+- AI辅助实现：
+  - 使用 Codex 在隔离工作区中完成 Task 0.1；
+  - 首先创建测试用例，验证项目结构和 CLI 入口需求；
+  - 初始测试因项目结构缺失失败（RED）；
+  - 随后创建：
+    - pyproject.toml；
+    - safecode Python 包结构；
+    - 最小 CLI 入口；
+    - pytest 测试结构；
+  - 完成最小实现后重新运行测试。
+
+- 验证结果：
+  - pytest 测试通过：
+    - 3 passed；
+  - CLI 验证通过：
+    - safecode --help 返回正常；
+  - 确认未实现超出 Task 0.1 范围的功能；
+  - main 分支保持干净，所有修改均位于 task/0.1-project-init 分支。
+
+- 当前状态：
+  - Task 0.1 已完成实现和验证；
+  - 等待提交 commit；
+  - 后续将创建 Merge Request，经审核后合并至 main。
