@@ -329,7 +329,7 @@ Can run in parallel with：Task 1.3、Task 1.4
 
 ---
 
-### Task 1.6：Agent Loop
+### Task 1.6：Agent Loop （已完成 feat: implement agent loop skeleton）
 
 ### Goal
 实现主循环 `AgentLoop`，编排完整管道：Context Builder → LLM → Action Parser → Guardrail → Tool Dispatcher → Stop Controller，迭代直到满足停止条件。

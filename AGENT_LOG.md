@@ -486,3 +486,63 @@
 - 当前状态：
   - Task 1.5 验收通过
   - 等待 commit 和 Merge Request
+
+## 2026-7-10 Task 4.1.6 完成 Agent Loop 骨架实现
+
+- Superpowers：
+  - using-git-worktrees
+  - verification-before-completion
+
+- 当前上下文：
+  - 已完成 Phase 1 前置模块：
+    - Task 1.1 核心数据模型
+    - Task 1.2 LLM Backend 接口
+    - Task 1.3 Action Parser
+    - Task 1.4 Stop Controller
+    - Task 1.5 Workspace Manager
+
+  - 本任务在独立 worktree 完成：
+    - branch: task/1.6-agent-loop
+
+- 人工决策：
+  - 使用 Codex 实现 Agent Loop 主循环
+  - 严格按照 SPEC.md 和 PLAN.md Task 1.6 范围实现
+  - 当前阶段只实现编排逻辑
+  - 不提前实现 Tool Dispatcher、Guardrail、Context Builder 等后续模块
+
+- AI辅助实现：
+  - 创建：
+    - safecode/core/agent_loop.py
+
+  - 实现：
+    - AgentLoop.run()
+
+  - 支持：
+    - Session 生命周期管理
+    - LLMBackend 调用
+    - ActionParser 调用
+    - SessionStep 记录
+    - StopController 停止判断
+
+  - 对未完成模块使用 stub 和 dependency injection
+
+  - 使用 TDD：
+    - RED：验证 AgentLoop 不存在时测试失败
+    - GREEN：实现 AgentLoop 并通过测试
+
+- 人工判断：
+  - 当前 Agent Loop 已完成 Phase 1 要求
+  - 已形成基础 Agent 执行闭环
+  - 后续模块可替换当前 stub 实现
+
+- 验证结果：
+  - focused test:
+    - 7 passed
+
+  - full pytest:
+    - 78 passed
+
+- 当前状态：
+  - Task 1.6 验收通过
+  - Phase 1 基础 Harness 骨架完成
+  - 等待 commit 和 Merge Request
