@@ -123,7 +123,7 @@ Can run in parallel with：Task 0.2
 
 ## Phase 1：Harness 核心框架
 
-### Task 1.1：数据模型——核心类型
+### Task 1.1：数据模型——核心类型 （已完成 feat: implement core data models）
 
 ### Goal
 定义 harness 中使用的所有核心数据结构（dataclasses/Pydantic 模型）：`ParsedAction`、`ToolResult`、`GuardrailEvent`、`TestFeedback`、`ContextPayload`、`SessionStatus`、`SessionStep`、`Session`、`TaskConfig`、`RuntimeConfig`。
