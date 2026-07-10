@@ -1,0 +1,16 @@
+.git
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+.env*
+*.key
+*.pem
+secrets.json
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

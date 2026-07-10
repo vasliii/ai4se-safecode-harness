@@ -90,7 +90,7 @@ Can run in parallel with：（无——必须先有项目脚手架）
 
 ---
 
-### Task 0.3：Docker 基础配置
+### Task 0.3：Docker 基础配置 （已完成 build: add docker base image）
 
 ### Goal
 创建最小化 `Dockerfile`，构建项目环境，后续扩展 WebUI 和 demo 配置。
