@@ -429,3 +429,60 @@
 - 当前状态：
   - Task 1.4 验收通过
   - 等待 commit 和 Merge Request
+
+## 2026-7-10 Task 4.1.5 完成 Workspace Manager 实现
+
+- Superpowers：
+  - using-git-worktrees
+  - verification-before-completion
+
+- 当前上下文：
+  - 已完成：
+    - Task 0.1 项目初始化
+    - Task 0.2 GitLab CI
+    - Task 0.3 Docker 基础配置
+    - Task 1.1 核心数据模型
+    - Task 1.2 LLM Backend 接口
+    - Task 1.3 Action Parser
+    - Task 1.4 Stop Controller
+  - 本任务在独立 worktree 完成：
+    - branch: task/1.5-workspace-manager
+
+- 人工决策：
+  - 使用 Codex 实现 Workspace Manager
+  - 严格按照 SPEC.md 和 PLAN.md Task 1.5 范围实现
+  - 不提前实现 Agent Loop、Tool Dispatcher 等后续模块
+
+- AI辅助实现：
+  - 创建：
+    - safecode/core/workspace_manager.py
+
+  - 实现：
+    - WorkspaceManager.setup()
+    - WorkspaceManager.cleanup()
+    - workspace_root 管理
+
+  - 支持：
+    - workspace_template 复制
+    - 独立 workspace 创建
+    - workspace 清理
+    - keep session 保留逻辑
+
+  - 使用 TDD：
+    - RED：验证 WorkspaceManager 不存在时测试失败
+    - GREEN：实现 WorkspaceManager 并通过测试
+
+- 人工判断：
+  - 当前实现符合 Task 1.5 要求
+  - Workspace Manager 可以为后续 Agent 执行提供隔离工作目录
+
+- 验证结果：
+  - focused test:
+    - 7 passed
+
+  - full pytest:
+    - 71 passed
+
+- 当前状态：
+  - Task 1.5 验收通过
+  - 等待 commit 和 Merge Request
