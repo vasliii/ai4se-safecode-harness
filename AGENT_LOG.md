@@ -111,3 +111,43 @@
   - Task 0.1 已完成实现和验证；
   - 等待提交 commit；
   - 后续将创建 Merge Request，经审核后合并至 main。
+
+## 2026-7-10 Task 4.0.2 GitLab CI 配置
+
+- Superpowers：
+  - using-git-worktrees
+  - verification-before-completion
+
+- 当前上下文：
+  - Task 0.1 已完成并合并到 main；
+  - 当前进入 Task 0.2；
+  - 使用独立 worktree：
+    - 分支：task/0.2-gitlab-ci
+
+- 人工决策：
+  - 按照 PLAN.md 完成 GitLab CI 基础配置；
+  - 仅实现自动化测试流程，不扩展其他 CI 功能。
+
+- 人工判断：
+  - Task 0.2 的目标是建立项目持续集成能力；
+  - CI 配置应能够自动执行测试并反馈结果；
+  - 不应提前引入后续部署和发布流程。
+
+- AI辅助实现：
+  - 使用 Codex 在隔离工作区完成 CI 配置；
+  - 采用 TDD 流程验证 `.gitlab-ci.yml`；
+  - 新增 CI 配置检查测试；
+  - 完成 unit-test job、coverage 和 artifacts 配置。
+
+- 验证结果：
+  - python -m pytest：
+    - 4 passed
+  - CI 命令验证：
+    - pytest --cov=safecode ...
+    - coverage 100%
+    - 满足 80% 门槛
+  - YAML 配置解析通过。
+
+- 当前状态：
+  - Task 0.2 已完成实现和验证；
+  - 等待 PLAN 更新、commit 和 MR。
