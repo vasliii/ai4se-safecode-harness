@@ -175,7 +175,7 @@ Can run in parallel with：Task 0.2、Task 0.3
 
 ---
 
-### Task 1.2：LLM Backend 接口
+### Task 1.2：LLM Backend 接口 （已完成 feat: implement llm backend interface）
 
 ### Goal
 定义 `LLMBackend` 抽象基类，`RealLLM` 和 `MockLLM` 均实现该接口，方法为 `query(context: ContextPayload) -> str`。
