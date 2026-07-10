@@ -374,3 +374,58 @@
 - 当前状态：
   - Task 1.3 验收通过
   - 等待 commit 和 Merge Request
+
+## 2026-7-10 Task 4.1.4 完成 Stop Controller 实现
+
+- Superpowers：
+  - using-git-worktrees
+  - verification-before-completion
+
+- 当前上下文：
+  - 已完成：
+    - Task 0.1 项目初始化
+    - Task 0.2 GitLab CI
+    - Task 0.3 Docker 基础配置
+    - Task 1.1 核心数据模型
+    - Task 1.2 LLM Backend 接口
+    - Task 1.3 Action Parser
+  - 本任务在独立 worktree 完成：
+    - branch: task/1.4-stop-controller
+
+- 人工决策：
+  - 使用 Codex 实现 Stop Controller
+  - 严格按照 SPEC.md 和 PLAN.md Task 1.4 范围实现
+  - 不提前实现 Agent Loop、Guardrail、Tool Dispatcher 等后续模块
+
+- AI辅助实现：
+  - 创建：
+    - safecode/core/stop_controller.py
+
+  - 实现：
+    - StopController.should_stop()
+
+  - 支持：
+    - SUCCESS
+    - MAX_ITERATIONS_REACHED
+    - TERMINATED_BY_GUARDRAIL
+    - TIMEOUT
+    - FINISHED_WITHOUT_PASSING_TESTS
+    - INVALID_ACTION_LIMIT_REACHED
+    - RUNNING
+
+  - 按 PLAN 要求固定顺序判断停止条件
+
+- 人工判断：
+  - 当前实现符合 Task 1.4 要求
+  - StopController 可作为后续 Agent Loop 的停止判断组件
+
+- 验证结果：
+  - focused test:
+    - 9 passed
+
+  - full pytest:
+    - 64 passed
+
+- 当前状态：
+  - Task 1.4 验收通过
+  - 等待 commit 和 Merge Request
