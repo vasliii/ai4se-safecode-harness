@@ -22,7 +22,7 @@
 
 ## Phase 0：工程初始化
 
-### Task 0.1：Python 项目脚手架 （已完成）
+### Task 0.1：Python 项目脚手架 （已完成 feat: complete task 0.1 project initialization）
 
 ### Goal
 初始化 Python 项目结构，包括依赖管理、pytest 配置和 `safecode` 包骨架。
@@ -61,7 +61,7 @@ Can run in parallel with：（无）
 
 ---
 
-### Task 0.2：GitLab CI 配置
+### Task 0.2：GitLab CI 配置 （已完成 ci: add gitlab unit test pipeline）
 
 ### Goal
 配置 `.gitlab-ci.yml`，包含 `unit-test` job，每次 push 时运行 pytest。
