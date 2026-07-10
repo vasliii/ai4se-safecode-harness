@@ -295,7 +295,7 @@ Can run in parallel with：Task 1.3
 
 ---
 
-### Task 1.5：Workspace Manager
+### Task 1.5：Workspace Manager （已完成 feat: implement workspace manager）
 
 ### Goal
 实现 `WorkspaceManager`，将工作区模板复制到临时目录并管理清理。
