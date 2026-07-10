@@ -250,7 +250,7 @@ Can run in parallel with：Task 1.2
 
 ---
 
-### Task 1.4：Stop Controller
+### Task 1.4：Stop Controller （已完成 feat: implement stop controller）
 
 ### Goal
 实现 `StopController`，根据所有停止条件评估 `Session` 状态，返回相应的 `SessionStatus`。
