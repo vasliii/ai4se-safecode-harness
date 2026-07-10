@@ -206,7 +206,7 @@ Can run in parallel with：（无——所有 LLM 任务的基础）
 
 ---
 
-### Task 1.3：Action Parser
+### Task 1.3：Action Parser （已完成 feat: implement action parser）
 
 ### Goal
 实现 `ActionParser`，将原始 LLM 响应字符串解析为 `ParsedAction`，或抛出带具体原因的 `InvalidActionError`。
