@@ -598,7 +598,7 @@ Can run in parallel with：（无——集成所有工具）
 
 ## Phase 3：Guardrail（治理护栏）
 
-### Task 3.1：Path Guardrail（路径护栏）
+### Task 3.1：Path Guardrail（路径护栏） （已完成 feat: implement path guardrail）
 
 ### Goal
 实现 `PathGuard`，验证文件路径是否在工作区根目录内。

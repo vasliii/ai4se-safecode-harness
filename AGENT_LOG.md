@@ -929,3 +929,60 @@
   - Task 2.6 验收通过
   - Phase 2 工具系统完成
   - 等待 commit 和 Merge Request
+
+## 2026-7-11 Task 4.3.1 完成 Path Guardrail 实现
+
+- Superpowers：
+  - using-git-worktrees
+  - verification-before-completion
+
+- 当前上下文：
+  - Phase 1 已完成基础 Harness 骨架
+  - Phase 2 已完成完整工具系统
+  - 进入 Phase 3 Guardrail 治理护栏
+  - 本任务在独立 worktree 完成：
+    - branch: task/3.1-path-guard
+
+- 人工决策：
+  - 使用 Codex 实现 Path Guardrail
+  - 严格按照 SPEC.md 和 PLAN.md Task 3.1 范围实现
+  - 本任务只实现路径护栏
+  - 不提前实现 SensitiveFileGuard、ShellGuard、Guardrail 编排器或 Agent Loop 集成
+  - Codex 连接中断后，选择在当前已有 worktree / branch 上继续完成任务
+
+- AI辅助实现：
+  - 创建：
+    - safecode/guardrail/__init__.py
+    - safecode/guardrail/path_guard.py
+
+  - 实现：
+    - PathGuard.check(path, workspace_root)
+
+  - 支持：
+    - None / 空路径放行
+    - workspace 内普通路径放行
+    - workspace 内嵌套路径放行
+    - ../ 逃逸拦截
+    - 绝对路径拦截
+    - resolve 后指向 workspace 外部的路径拦截
+    - 返回 GuardrailEvent(reason="path_outside_workspace")
+
+  - 使用 TDD：
+    - RED：验证 safecode.guardrail 模块不存在时测试失败
+    - GREEN：实现 PathGuard 并通过测试
+
+- 人工判断：
+  - 当前实现符合 Task 3.1 要求
+  - PathGuard 可作为后续 Guardrail 编排器的路径安全组件
+  - 当前任务未承担敏感文件检查或 shell 命令检查职责
+
+- 验证结果：
+  - focused test:
+    - 7 passed
+
+  - full pytest:
+    - 144 passed
+
+- 当前状态：
+  - Task 3.1 验收通过
+  - 等待 commit 和 Merge Request
