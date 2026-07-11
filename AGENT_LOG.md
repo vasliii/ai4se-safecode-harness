@@ -986,3 +986,63 @@
 - 当前状态：
   - Task 3.1 验收通过
   - 等待 commit 和 Merge Request
+
+## 2026-7-11 Task 4.3.2 完成 Sensitive File Guardrail 实现
+
+- Superpowers：
+  - using-git-worktrees
+  - verification-before-completion
+
+- 当前上下文：
+  - Phase 1 已完成基础 Harness 骨架
+  - Phase 2 已完成完整工具系统
+  - Phase 3 已完成：
+    - Task 3.1 Path Guardrail
+  - 本任务在独立 worktree 完成：
+    - branch: task/3.2-sensitive-file-guard
+
+- 人工决策：
+  - 使用 Codex 实现 SensitiveFileGuard
+  - 严格按照 SPEC.md 和 PLAN.md Task 3.2 范围实现
+  - 本任务只实现敏感文件匹配
+  - 不提前实现 ShellGuard、Guardrail 编排器、Agent Loop 集成或工具修改
+
+- AI辅助实现：
+  - 创建：
+    - safecode/guardrail/sensitive_file_guard.py
+
+  - 修改：
+    - safecode/guardrail/__init__.py
+
+  - 实现：
+    - SensitiveFileGuard.check(path)
+
+  - 支持：
+    - None 路径放行
+    - 普通路径放行
+    - .env / .env.* 拦截
+    - *.key / *.pem 拦截
+    - secrets.json 拦截
+    - id_rsa / id_rsa.pub 拦截
+    - .git/config 拦截
+    - 返回 GuardrailEvent(reason="sensitive_file_access")
+
+  - 使用 TDD：
+    - RED：验证 SensitiveFileGuard 不存在时测试失败
+    - GREEN：实现 SensitiveFileGuard 并通过测试
+
+- 人工判断：
+  - 当前实现符合 Task 3.2 要求
+  - SensitiveFileGuard 可作为后续 Guardrail 编排器的敏感文件安全组件
+  - 当前任务未承担路径逃逸检查或 shell 命令检查职责
+
+- 验证结果：
+  - focused test:
+    - 4 passed
+
+  - full pytest:
+    - 148 passed
+
+- 当前状态：
+  - Task 3.2 验收通过
+  - 等待 commit 和 Merge Request
