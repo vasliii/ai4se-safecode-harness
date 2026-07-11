@@ -381,7 +381,7 @@ Can run in parallel with：（无——集成所有 Phase 1 模块）
 
 ## Phase 2：工具系统
 
-### Task 2.1：Tool 基类和 Dispatcher
+### Task 2.1：Tool 基类和 Dispatcher （已完成 feat: implement tool base and dispatcher）
 
 ### Goal
 定义 `Tool` 抽象基类和 `ToolDispatcher`，将 `ParsedAction` 路由到正确的工具实现。
