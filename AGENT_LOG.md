@@ -859,3 +859,73 @@
 - 当前状态：
   - Task 2.5 验收通过
   - 等待 commit 和 Merge Request
+
+## 2026-7-11 Task 4.2.6 完成工具注册与集成
+
+- Superpowers：
+  - using-git-worktrees
+  - verification-before-completion
+
+- 当前上下文：
+  - Phase 1 已完成基础 Harness 骨架
+  - Phase 2 已完成：
+    - Task 2.1 Tool 基类和 Dispatcher
+    - Task 2.2 只读文件系统工具
+    - Task 2.3 文件修改工具
+    - Task 2.4 测试执行工具 run_tests
+    - Task 2.5 Shell 执行工具 run_shell
+  - 本任务在独立 worktree 完成：
+    - branch: task/2.6-tool-registry
+
+- 人工决策：
+  - 使用 Codex 实现工具注册与最小集成验证
+  - 严格按照 SPEC.md 和 PLAN.md Task 2.6 范围实现
+  - 本任务只负责默认工具集注册和导出
+  - 不提前实现 Guardrail、Agent Loop 集成、Context Builder、TestFeedbackSummarizer、RealLLM 或 MockLLM
+
+- AI辅助实现：
+  - 创建：
+    - safecode/tools/registry.py
+
+  - 修改：
+    - safecode/tools/__init__.py
+
+  - 实现：
+    - create_default_tools() -> list[Tool]
+
+  - 默认工具集包含：
+    - ListFilesTool
+    - ReadFileTool
+    - SearchContentTool
+    - WriteFileTool
+    - EditFileTool
+    - RunTestsTool
+    - RunShellTool
+
+  - 支持：
+    - 每次调用 create_default_tools() 返回新的工具实例
+    - 工具名称唯一
+    - 工具类统一从 safecode.tools 导出
+    - ToolDispatcher 可使用默认工具集完成分发
+
+  - 使用 TDD：
+    - RED：验证 create_default_tools 和工具类导出不存在时测试失败
+    - GREEN：实现工具注册和导出并通过测试
+
+- 人工判断：
+  - 当前实现符合 Task 2.6 要求
+  - Phase 2 工具系统已完成
+  - Harness 已具备读取、修改、测试执行、Shell 执行的真实工具能力
+  - 后续需要通过 Guardrail 为真实工具添加安全边界
+
+- 验证结果：
+  - focused test:
+    - 7 passed
+
+  - full pytest:
+    - 137 passed
+
+- 当前状态：
+  - Task 2.6 验收通过
+  - Phase 2 工具系统完成
+  - 等待 commit 和 Merge Request
