@@ -567,7 +567,7 @@ Can run in parallel with：Task 2.3、Task 2.4
 
 ---
 
-### Task 2.6：工具注册与集成
+### Task 2.6：工具注册与集成 （已完成 feat: implement tool registry）
 
 ### Goal
 将全部 7 个工具接入 `ToolDispatcher`，验证端到端工具分发正常工作。
