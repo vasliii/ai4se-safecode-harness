@@ -546,3 +546,67 @@
   - Task 1.6 验收通过
   - Phase 1 基础 Harness 骨架完成
   - 等待 commit 和 Merge Request
+
+## 2026-7-11 Task 4.2.1 完成 Tool 基类和 Dispatcher 实现
+
+- Superpowers：
+  - using-git-worktrees
+  - verification-before-completion
+
+- 当前上下文：
+  - Phase 1 已完成：
+    - Task 1.1 核心数据模型
+    - Task 1.2 LLM Backend 接口
+    - Task 1.3 Action Parser
+    - Task 1.4 Stop Controller
+    - Task 1.5 Workspace Manager
+    - Task 1.6 Agent Loop 骨架
+  - 进入 Phase 2 工具系统
+  - 本任务在独立 worktree 完成：
+    - branch: task/2.1-tool-base-dispatcher
+
+- 人工决策：
+  - 使用 Codex 实现 Tool 抽象基类和 ToolDispatcher
+  - 严格按照 SPEC.md 和 PLAN.md Task 2.1 范围实现
+  - 不提前实现任何具体工具
+  - 不提前集成 Guardrail 或 Agent Loop
+
+- AI辅助实现：
+  - 创建：
+    - safecode/tools/__init__.py
+    - safecode/tools/base.py
+    - safecode/tools/dispatcher.py
+
+  - 实现：
+    - Tool 抽象基类
+    - ToolDispatcher
+    - registered_tools 注册表
+
+  - 支持：
+    - 工具注册
+    - ParsedAction 分发
+    - action.params 参数传递
+    - 未知工具错误处理
+    - 工具异常捕获
+    - ToolResult 返回
+    - duration_ms 记录
+
+  - 使用 TDD：
+    - RED：验证 safecode.tools 模块不存在时测试失败
+    - GREEN：实现 Tool 和 ToolDispatcher 并通过测试
+
+- 人工判断：
+  - 当前实现符合 Task 2.1 要求
+  - Dispatcher 只负责分发，不负责 Guardrail、路径安全或具体工具逻辑
+  - 后续具体工具可基于 Tool 抽象类逐步实现
+
+- 验证结果：
+  - focused test:
+    - 8 passed
+
+  - full pytest:
+    - 86 passed
+
+- 当前状态：
+  - Task 2.1 验收通过
+  - 等待 commit 和 Merge Request
