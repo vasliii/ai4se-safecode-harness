@@ -630,7 +630,7 @@ Can run in parallel with：Task 3.2、Task 3.3
 
 ---
 
-### Task 3.2：Sensitive File Guardrail（敏感文件护栏）
+### Task 3.2：Sensitive File Guardrail（敏感文件护栏） （已完成 feat: implement sensitive file guardrail）
 
 ### Goal
 实现 `SensitiveFileGuard`，拦截对敏感文件（`.env`、`*.key`、`*.pem`、`secrets.json`、`id_rsa`、`.git/config`）的访问。
