@@ -420,7 +420,7 @@ Can run in parallel with：（无——所有工具实现的基础）
 
 ---
 
-### Task 2.2：文件系统工具——list_files、read_file、search_content
+### Task 2.2：文件系统工具——list_files、read_file、search_content （已完成 feat: implement readonly file tools）
 
 ### Goal
 实现三个只读文件系统工具：`list_files`、`read_file`、`search_content`。

@@ -610,3 +610,63 @@
 - 当前状态：
   - Task 2.1 验收通过
   - 等待 commit 和 Merge Request
+
+## 2026-7-11 Task 4.2.2 完成只读文件系统工具实现
+
+- Superpowers：
+  - using-git-worktrees
+  - verification-before-completion
+
+- 当前上下文：
+  - Phase 1 已完成基础 Harness 骨架
+  - Phase 2 已完成：
+    - Task 2.1 Tool 基类和 Dispatcher
+  - 本任务在独立 worktree 完成：
+    - branch: task/2.2-readonly-tools
+
+- 人工决策：
+  - 使用 Codex 实现只读文件系统工具
+  - 严格按照 SPEC.md 和 PLAN.md Task 2.2 范围实现
+  - 本任务只实现读取和搜索能力
+  - 不提前实现写工具、测试执行工具、Shell 工具或工具注册
+  - Guardrail 路径与敏感文件检查留到 Phase 3
+
+- AI辅助实现：
+  - 创建：
+    - safecode/tools/list_files.py
+    - safecode/tools/read_file.py
+    - safecode/tools/search_content.py
+
+  - 实现：
+    - ListFilesTool
+    - ReadFileTool
+    - SearchContentTool
+
+  - 支持：
+    - 基于 session.workspace_root 的路径解析
+    - 目录文件列出
+    - 文本文件读取
+    - start_line / end_line 行范围读取
+    - 正则内容搜索
+    - path / file_pattern 搜索范围限制
+    - 常见错误情况返回 ToolResult
+
+  - 使用 TDD：
+    - RED：验证只读工具模块不存在时测试失败
+    - GREEN：实现三个只读工具并通过测试
+
+- 人工判断：
+  - 当前实现符合 Task 2.2 要求
+  - Harness 已具备读取真实 workspace 中文件的基础能力
+  - 当前工具只负责基础路径解析和错误返回，不承担 Guardrail 职责
+
+- 验证结果：
+  - focused test:
+    - 17 passed
+
+  - full pytest:
+    - 103 passed
+
+- 当前状态：
+  - Task 2.2 验收通过
+  - 等待 commit 和 Merge Request
