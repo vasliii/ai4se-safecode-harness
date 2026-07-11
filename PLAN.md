@@ -535,7 +535,7 @@ Can run in parallel with：Task 2.3、Task 2.5
 
 ---
 
-### Task 2.5：Shell 执行工具——run_shell
+### Task 2.5：Shell 执行工具——run_shell （已完成 feat: implement run shell tool）
 
 ### Goal
 实现 `run_shell` 工具，在工作区中执行 allowlist 中的命令。

@@ -793,3 +793,69 @@
 - 当前状态：
   - Task 2.4 验收通过
   - 等待 commit 和 Merge Request
+
+## 2026-7-11 Task 4.2.5 完成 Shell 执行工具 run_shell 实现
+
+- Superpowers：
+  - using-git-worktrees
+  - verification-before-completion
+
+- 当前上下文：
+  - Phase 1 已完成基础 Harness 骨架
+  - Phase 2 已完成：
+    - Task 2.1 Tool 基类和 Dispatcher
+    - Task 2.2 只读文件系统工具
+    - Task 2.3 文件修改工具
+    - Task 2.4 测试执行工具 run_tests
+  - 本任务在独立 worktree 完成：
+    - branch: task/2.5-run-shell-tool
+
+- 人工决策：
+  - 使用 Codex 实现 run_shell 工具
+  - 严格按照 SPEC.md 和 PLAN.md Task 2.5 范围实现
+  - 本任务只负责执行 shell 命令并返回原始结果
+  - 不实现 allowlist、危险命令拦截、ShellGuard 或 Guardrail
+  - 针对“无效命令”的 success 语义进行了人工澄清：
+    - 命令被 shell 执行但返回非 0：success=True
+    - 明显命令不存在或无法识别：success=False
+
+- AI辅助实现：
+  - 创建：
+    - safecode/tools/run_shell.py
+
+  - 实现：
+    - RunShellTool
+
+  - 支持：
+    - 在 session.workspace_root 中执行 shell 命令
+    - subprocess.run(..., shell=True)
+    - 捕获 exit_code
+    - 捕获 stdout
+    - 捕获 stderr
+    - 捕获 command
+    - cwd 固定为 session.workspace_root
+    - 命令超时处理
+    - 缺少 command 参数处理
+    - 明显未知命令返回 success=False
+    - 普通非 0 exit code 保持 success=True
+
+  - 使用 TDD：
+    - RED：验证 run_shell 模块不存在时测试失败
+    - GREEN：实现 RunShellTool 并通过测试
+    - 修正：补充无效命令与非 0 exit code 的语义区分
+
+- 人工判断：
+  - 当前实现符合 Task 2.5 要求
+  - run_shell 只负责执行命令，不承担安全策略职责
+  - Shell 安全检查留到后续 Guardrail 阶段
+
+- 验证结果：
+  - focused test:
+    - 6 passed
+
+  - full pytest:
+    - 130 passed
+
+- 当前状态：
+  - Task 2.5 验收通过
+  - 等待 commit 和 Merge Request
