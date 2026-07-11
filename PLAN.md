@@ -465,7 +465,7 @@ Can run in parallel with：Task 2.3
 
 ---
 
-### Task 2.3：文件修改工具——write_file、edit_file
+### Task 2.3：文件修改工具——write_file、edit_file （已完成 feat: implement file modification tools）
 
 ### Goal
 实现两个文件修改工具：`write_file` 和 `edit_file`。
