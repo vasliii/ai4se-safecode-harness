@@ -660,7 +660,7 @@ Can run in parallel with：Task 3.1、Task 3.3
 
 ---
 
-### Task 3.3：Command Guardrail（命令护栏）
+### Task 3.3：Command Guardrail（命令护栏） （已完成 feat: implement shell guardrail）
 
 ### Goal
 实现 `ShellGuard`，拦截危险 Shell 命令，仅允许 allowlist 中的命令。
