@@ -1046,3 +1046,63 @@
 - 当前状态：
   - Task 3.2 验收通过
   - 等待 commit 和 Merge Request
+
+## 2026-7-11 Task 4.3.3 完成 Command Guardrail / ShellGuard 实现
+
+- Superpowers：
+  - using-git-worktrees
+  - verification-before-completion
+
+- 当前上下文：
+  - Phase 1 已完成基础 Harness 骨架
+  - Phase 2 已完成完整工具系统
+  - Phase 3 已完成：
+    - Task 3.1 Path Guardrail
+    - Task 3.2 Sensitive File Guardrail
+  - 本任务在独立 worktree 完成：
+    - branch: task/3.3-shell-guard
+
+- 人工决策：
+  - 使用 Codex 实现 ShellGuard
+  - 严格按照 SPEC.md 和 PLAN.md Task 3.3 范围实现
+  - 本任务只实现 Shell 命令护栏
+  - 不提前实现 Guardrail 编排器、Agent Loop 集成或工具修改
+
+- AI辅助实现：
+  - 创建：
+    - safecode/guardrail/shell_guard.py
+
+  - 修改：
+    - safecode/guardrail/__init__.py
+
+  - 实现：
+    - ShellGuard.check(command, allowlist)
+
+  - 支持：
+    - None / 空字符串 / 纯空格命令放行
+    - 危险命令始终拦截
+    - 非危险命令必须匹配 allowlist
+    - allowlist 使用 command.strip().startswith(allowed)
+    - allowlist 匹配区分大小写
+    - 返回 GuardrailEvent(reason="dangerous_shell_command")
+    - 被拦截事件包含 suggestion
+
+  - 使用 TDD：
+    - RED：验证 ShellGuard 不存在时测试失败
+    - GREEN：实现 ShellGuard 并通过测试
+
+- 人工判断：
+  - 当前实现符合 Task 3.3 要求
+  - ShellGuard 只负责安全判断，不负责执行命令
+  - run_shell 工具执行命令，ShellGuard 负责决定是否允许执行
+
+- 验证结果：
+  - focused test:
+    - 6 passed
+
+  - full pytest:
+    - 154 passed
+
+- 当前状态：
+  - Task 3.3 验收通过
+  - 等待 commit 和 Merge Request
