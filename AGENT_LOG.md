@@ -729,3 +729,67 @@
 - 当前状态：
   - Task 2.3 验收通过
   - 等待 commit 和 Merge Request
+
+## 2026-7-11 Task 4.2.4 完成测试执行工具 run_tests 实现
+
+- Superpowers：
+  - using-git-worktrees
+  - verification-before-completion
+
+- 当前上下文：
+  - Phase 1 已完成基础 Harness 骨架
+  - Phase 2 已完成：
+    - Task 2.1 Tool 基类和 Dispatcher
+    - Task 2.2 只读文件系统工具
+    - Task 2.3 文件修改工具
+  - 本任务在独立 worktree 完成：
+    - branch: task/2.4-run-tests-tool
+
+- 人工决策：
+  - 使用 Codex 实现 run_tests 工具
+  - 严格按照 SPEC.md 和 PLAN.md Task 2.4 范围实现
+  - 本任务只负责执行测试并返回原始结果
+  - 不提前实现 TestFeedbackSummarizer
+  - 不提前接入 Agent Loop
+  - 不提前实现工具注册
+
+- AI辅助实现：
+  - 创建：
+    - safecode/tools/run_tests.py
+
+  - 实现：
+    - RunTestsTool
+
+  - 支持：
+    - 在 session.workspace_root 中执行 pytest
+    - 默认命令 pytest
+    - params["args"] 追加 pytest 参数
+    - 捕获 exit_code
+    - 捕获 stdout
+    - 捕获 stderr
+    - 捕获 command
+    - 测试通过时 success=True
+    - 测试失败 exit_code=1 时仍然 success=True
+    - 命令不存在时返回 success=False
+    - 测试超时时返回 success=False
+    - 非标准退出码保留原始结果
+
+  - 使用 TDD：
+    - RED：验证 run_tests 模块不存在时测试失败
+    - GREEN：实现 RunTestsTool 并通过测试
+
+- 人工判断：
+  - 当前实现符合 Task 2.4 要求
+  - Harness 已具备运行真实 workspace 测试命令的基础能力
+  - pytest 输出解析和结构化反馈留到后续 TestFeedbackSummarizer
+
+- 验证结果：
+  - focused test:
+    - 7 passed
+
+  - full pytest:
+    - 124 passed
+
+- 当前状态：
+  - Task 2.4 验收通过
+  - 等待 commit 和 Merge Request

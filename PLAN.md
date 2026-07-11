@@ -502,7 +502,7 @@ Can run in parallel with：Task 2.2
 
 ---
 
-### Task 2.4：测试执行工具——run_tests
+### Task 2.4：测试执行工具——run_tests （已完成 feat: implement run tests tool）
 
 ### Goal
 实现 `run_tests` 工具，在工作区中执行 pytest 并返回结构化结果。
