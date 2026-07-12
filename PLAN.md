@@ -896,7 +896,7 @@ Can run in parallel with：Task 5.2、Task 5.3
 
 ---
 
-### Task 5.2：Memory Manager（Session Trace）
+### Task 5.2：Memory Manager（Session Trace） （已完成 feat: implement memory manager）
 
 ### Goal
 实现 `MemoryManager`，持久化并加载 `session_trace.json`，用于跨会话记忆。
