@@ -1835,3 +1835,63 @@
 - 当前状态：
   - Task 6.2 验收通过
   - 等待 commit 和 Merge Request
+
+## 2026-7-12 Task 4.6.3 完成 MockLLM Backend 实现
+
+- Superpowers：
+  - using-git-worktrees
+  - test-driven-development
+  - verification-before-completion
+
+- 当前上下文：
+  - Phase 6 已完成：
+    - Task 6.1 Credential Manager
+    - Task 6.2 RealLLM Backend
+  - 本任务在独立 worktree 完成：
+    - branch: task/6.3-mock-llm
+
+- 人工决策：
+  - 使用 Codex 实现 MockLLM
+  - 只实现确定性测试用 LLM 后端
+  - 不实现 LLM Factory、CLI、SessionManager、AgentLoop 或 WebUI 修改
+
+- AI辅助实现：
+  - 创建：
+    - safecode/llm/mock_llm.py
+
+  - 修改：
+    - safecode/llm/__init__.py
+
+  - 新增测试：
+    - tests/test_mock_llm.py
+
+  - 实现：
+    - MockLLM(LLMBackend)
+    - Rule dataclass
+    - query()
+
+  - 支持：
+    - scripted actions 顺序返回
+    - actions 用完后返回 finish
+    - 空 actions 返回 finish
+    - rule-based predicate 匹配
+    - predicate 异常时跳过并继续
+    - 无规则命中时返回 finish
+    - 默认 finish 动作格式合法
+    - 返回 JSON 可被 ActionParser 解析
+    - 相同 context 下行为确定
+
+  - 使用 TDD：
+    - RED：验证 MockLLM 无法从 safecode.llm 导入
+    - GREEN：实现 MockLLM 并通过测试
+
+- 验证结果：
+  - focused test:
+    - 10 passed
+
+  - full pytest:
+    - 257 passed
+
+- 当前状态：
+  - Task 6.3 验收通过
+  - 等待 commit 和 Merge Request

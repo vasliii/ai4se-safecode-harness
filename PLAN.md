@@ -1170,7 +1170,7 @@ Can run in parallel with：Task 6.3
 
 ---
 
-### Task 6.3：MockLLM Backend
+### Task 6.3：MockLLM Backend （已完成 feat: implement mock llm backend）
 
 ### Goal
 实现 `MockLLM`，支持两种模式：scripted（从列表返回动作）和 rule-based（根据上下文谓词返回动作）。
