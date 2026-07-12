@@ -767,7 +767,7 @@ Can run in parallel with：（无）
 
 ## Phase 4：Test Feedback Summarizer（测试反馈闭环）
 
-### Task 4.1：Test Feedback Summarizer
+### Task 4.1：Test Feedback Summarizer （已完成 feat: implement test feedback summarizer）
 
 ### Goal
 实现 `TestFeedbackSummarizer`，将 pytest 输出解析为结构化 `TestFeedback`，并包含历史对比。
