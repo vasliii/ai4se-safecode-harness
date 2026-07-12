@@ -1037,7 +1037,7 @@ Can run in parallel with：Task 5.3
 
 ---
 
-### Task 5.5：Session Manager
+### Task 5.5：Session Manager （已完成 feat: implement session manager）
 
 ### Goal
 实现 `SessionManager`，编排完整的会话生命周期：创建工作区、创建会话、运行 agent loop、持久化 trace、清理。
