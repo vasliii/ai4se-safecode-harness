@@ -1085,7 +1085,7 @@ Can run in parallel with：（无——集成所有主要组件）
 
 ## Phase 6：LLM Backend
 
-### Task 6.1：Credential Manager
+### Task 6.1：Credential Manager （已完成 feat: implement credential manager）
 
 ### Goal
 实现 `CredentialManager`，使用 Python keyring 安全存储和检索 API Key，并支持环境变量和 `.env` 回退。
