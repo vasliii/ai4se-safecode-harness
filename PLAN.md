@@ -694,7 +694,7 @@ Can run in parallel with：Task 3.1、Task 3.2
 
 ---
 
-### Task 3.4：Guardrail 编排器
+### Task 3.4：Guardrail 编排器 （已完成 feat: implement guardrail orchestrator）
 
 ### Goal
 实现 `Guardrail` 编排器，按顺序运行全部三个护栏（路径、敏感文件、命令），返回第一个拦截事件。

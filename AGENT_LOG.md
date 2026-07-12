@@ -1106,3 +1106,65 @@
 - 当前状态：
   - Task 3.3 验收通过
   - 等待 commit 和 Merge Request
+
+## 2026-7-12 Task 4.3.4 完成 Guardrail 编排器实现
+
+- Superpowers：
+  - using-git-worktrees
+  - verification-before-completion
+
+- 当前上下文：
+  - Phase 1 已完成基础 Harness 骨架
+  - Phase 2 已完成完整工具系统
+  - Phase 3 已完成：
+    - Task 3.1 PathGuard
+    - Task 3.2 SensitiveFileGuard
+    - Task 3.3 ShellGuard
+  - 本任务在独立 worktree 完成：
+    - branch: task/3.4-guardrail-orchestrator
+
+- 人工决策：
+  - 使用 Codex 实现 Guardrail 编排器
+  - 严格按照 SPEC.md 和 PLAN.md Task 3.4 范围实现
+  - 本任务只组合已有 guard
+  - 不提前实现 Agent Loop 集成、工具修改或后续模块
+
+- AI辅助实现：
+  - 创建：
+    - safecode/guardrail/guardrail.py
+
+  - 修改：
+    - safecode/guardrail/__init__.py
+
+  - 实现：
+    - Guardrail(shell_allowlist)
+    - Guardrail.check(action, session)
+
+  - 支持：
+    - 文件类工具先运行 PathGuard
+    - read_file / write_file / edit_file 运行 SensitiveFileGuard
+    - run_shell 运行 ShellGuard
+    - run_tests 放行
+    - finish 放行
+    - 返回第一个拦截事件
+    - 路径护栏优先于敏感文件护栏
+
+  - 使用 TDD：
+    - RED：验证 Guardrail 不存在时测试失败
+    - GREEN：实现 Guardrail 编排器并通过测试
+
+- 人工判断：
+  - 当前实现符合 Task 3.4 要求
+  - Guardrail 编排器已能统一调度路径、敏感文件和 shell 命令护栏
+  - 下一步可将真实 Guardrail 接入 Agent Loop
+
+- 验证结果：
+  - focused test:
+    - 9 passed
+
+  - full pytest:
+    - 163 passed
+
+- 当前状态：
+  - Task 3.4 验收通过
+  - 等待 commit 和 Merge Request
