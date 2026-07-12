@@ -1895,3 +1895,61 @@
 - 当前状态：
   - Task 6.3 验收通过
   - 等待 commit 和 Merge Request
+
+## 2026-7-12 Task 4.6.4 完成 LLM Backend Factory 实现
+
+- Superpowers：
+  - using-git-worktrees
+  - test-driven-development
+  - verification-before-completion
+
+- 当前上下文：
+  - Phase 6 已完成：
+    - Task 6.1 Credential Manager
+    - Task 6.2 RealLLM Backend
+    - Task 6.3 MockLLM Backend
+  - 本任务在独立 worktree 完成：
+    - branch: task/6.4-llm-factory
+
+- 人工决策：
+  - 使用 Codex 实现 LLM backend factory
+  - 只实现 create_llm_backend 工厂函数
+  - 不提前修改 SessionManager、AgentLoop、CLI、WebUI、CredentialManager、RealLLM 或 MockLLM 行为
+
+- AI辅助实现：
+  - 创建：
+    - safecode/llm/factory.py
+
+  - 修改：
+    - safecode/llm/__init__.py
+
+  - 新增测试：
+    - tests/test_llm_factory.py
+
+  - 实现：
+    - create_llm_backend()
+
+  - 支持：
+    - mock=False 返回 RealLLM
+    - mock=True + mock_actions 返回 scripted MockLLM
+    - mock=True + mock_rules 返回 rule-based MockLLM
+    - mock=True 且未提供 actions/rules 返回空 scripted MockLLM
+    - 同时提供 mock_actions 和 mock_rules 时抛出 ValueError
+    - 从 safecode.llm 导出 create_llm_backend
+    - 返回对象均为 LLMBackend 子类实例
+
+  - 使用 TDD：
+    - RED：验证 create_llm_backend 无法从 safecode.llm 导入
+    - GREEN：实现 factory 并通过测试
+
+- 验证结果：
+  - focused test:
+    - 6 passed
+
+  - full pytest:
+    - 263 passed
+
+- 当前状态：
+  - Task 6.4 验收通过
+  - Phase 6 LLM Backend 基础能力完成
+  - 等待 commit 和 Merge Request
