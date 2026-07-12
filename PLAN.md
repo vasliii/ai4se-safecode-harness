@@ -1206,7 +1206,7 @@ Can run in parallel with：Task 6.2
 
 ---
 
-### Task 6.4：LLM Backend 集成
+### Task 6.4：LLM Backend 集成 （已完成 feat: implement llm backend factory）
 
 ### Goal
 将 `RealLLM` 和 `MockLLM` 接入 `SessionManager` 和 CLI 入口点。
