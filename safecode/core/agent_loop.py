@@ -1,4 +1,4 @@
-﻿"""Agent loop skeleton for SafeCode Harness."""
+"""Agent loop skeleton for SafeCode Harness."""
 
 from __future__ import annotations
 
@@ -8,6 +8,7 @@ from typing import Protocol
 from safecode.core.action_parser import ActionParser
 from safecode.core.exceptions import InvalidActionError
 from safecode.core.stop_controller import StopController
+from safecode.feedback import TestFeedbackSummarizer
 from safecode.guardrail import Guardrail
 from safecode.llm import LLMBackend, LLMError
 from safecode.models import (
@@ -63,21 +64,6 @@ class _StubToolDispatcher:
         return ToolResult(tool=action.tool, success=True, data={})
 
 
-class _StubFeedbackSummarizer:
-    def summarize(self, tool_result: ToolResult, session: Session) -> TestFeedback:
-        data = tool_result.data or {}
-        exit_code = data.get("exit_code", 1)
-        passed = exit_code == 0
-        return TestFeedback(
-            exit_code=exit_code,
-            passed_count=1 if passed else 0,
-            failed_count=0 if passed else 1,
-            skipped_count=0,
-            duration_ms=tool_result.duration_ms,
-            status="passed" if passed else "failed",
-        )
-
-
 class AgentLoop:
     """Coordinate the current pipeline components for a SafeCode session."""
 
@@ -95,7 +81,7 @@ class AgentLoop:
         self.action_parser = action_parser or ActionParser()
         self.guardrail = guardrail
         self.tool_dispatcher = tool_dispatcher or _StubToolDispatcher()
-        self.feedback_summarizer = feedback_summarizer or _StubFeedbackSummarizer()
+        self.feedback_summarizer = feedback_summarizer or TestFeedbackSummarizer()
         self.stop_controller = stop_controller or StopController()
 
     def run(self, session: Session, llm_backend: LLMBackend, config: RuntimeConfig) -> Session:
@@ -193,3 +179,5 @@ def _last_guardrail_event(session: Session) -> GuardrailEvent | None:
         if step.guardrail_result is not None:
             return step.guardrail_result
     return None
+
+

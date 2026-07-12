@@ -68,6 +68,7 @@
 
 - Superpowers：
   - using-git-worktrees
+  - test-driven-development
   - verification-before-completion
 
 - 当前上下文：
@@ -116,6 +117,7 @@
 
 - Superpowers：
   - using-git-worktrees
+  - test-driven-development
   - verification-before-completion
 
 - 当前上下文：
@@ -156,6 +158,7 @@
 
 - Superpowers：
   - using-git-worktrees
+  - test-driven-development
   - verification-before-completion
 
 - 当前上下文：
@@ -207,6 +210,7 @@
 
 - Superpowers：
   - using-git-worktrees
+  - test-driven-development
   - verification-before-completion
 
 - 当前上下文：
@@ -270,6 +274,7 @@
 
 - Superpowers：
   - using-git-worktrees
+  - test-driven-development
   - verification-before-completion
 
 - 当前上下文：
@@ -324,6 +329,7 @@
 
 - Superpowers：
   - using-git-worktrees
+  - test-driven-development
   - verification-before-completion
 
 - 当前上下文：
@@ -379,6 +385,7 @@
 
 - Superpowers：
   - using-git-worktrees
+  - test-driven-development
   - verification-before-completion
 
 - 当前上下文：
@@ -434,6 +441,7 @@
 
 - Superpowers：
   - using-git-worktrees
+  - test-driven-development
   - verification-before-completion
 
 - 当前上下文：
@@ -491,6 +499,7 @@
 
 - Superpowers：
   - using-git-worktrees
+  - test-driven-development
   - verification-before-completion
 
 - 当前上下文：
@@ -551,6 +560,7 @@
 
 - Superpowers：
   - using-git-worktrees
+  - test-driven-development
   - verification-before-completion
 
 - 当前上下文：
@@ -615,6 +625,7 @@
 
 - Superpowers：
   - using-git-worktrees
+  - test-driven-development
   - verification-before-completion
 
 - 当前上下文：
@@ -675,6 +686,7 @@
 
 - Superpowers：
   - using-git-worktrees
+  - test-driven-development
   - verification-before-completion
 
 - 当前上下文：
@@ -734,6 +746,7 @@
 
 - Superpowers：
   - using-git-worktrees
+  - test-driven-development
   - verification-before-completion
 
 - 当前上下文：
@@ -798,6 +811,7 @@
 
 - Superpowers：
   - using-git-worktrees
+  - test-driven-development
   - verification-before-completion
 
 - 当前上下文：
@@ -864,6 +878,7 @@
 
 - Superpowers：
   - using-git-worktrees
+  - test-driven-development
   - verification-before-completion
 
 - 当前上下文：
@@ -934,6 +949,7 @@
 
 - Superpowers：
   - using-git-worktrees
+  - test-driven-development
   - verification-before-completion
 
 - 当前上下文：
@@ -991,6 +1007,7 @@
 
 - Superpowers：
   - using-git-worktrees
+  - test-driven-development
   - verification-before-completion
 
 - 当前上下文：
@@ -1051,6 +1068,7 @@
 
 - Superpowers：
   - using-git-worktrees
+  - test-driven-development
   - verification-before-completion
 
 - 当前上下文：
@@ -1111,6 +1129,7 @@
 
 - Superpowers：
   - using-git-worktrees
+  - test-driven-development
   - verification-before-completion
 
 - 当前上下文：
@@ -1173,6 +1192,7 @@
 
 - Superpowers：
   - using-git-worktrees
+  - test-driven-development
   - verification-before-completion
 
 - 当前上下文：
@@ -1239,6 +1259,7 @@
 
 - Superpowers：
   - using-git-worktrees
+  - test-driven-development
   - verification-before-completion
 
 - 当前上下文：
@@ -1299,4 +1320,70 @@
 
 - 当前状态：
   - Task 4.1 验收通过
+  - 等待 commit 和 Merge Request
+
+## 2026-7-12 Task 4.4.2 完成 Test Feedback 与 Agent Loop 集成
+
+- Superpowers：
+  - using-git-worktrees
+  - test-driven-development
+  - verification-before-completion
+
+- 当前上下文：
+  - Phase 1 已完成基础 Harness 骨架
+  - Phase 2 已完成完整工具系统
+  - Phase 3 已完成 Guardrail 与 Agent Loop 集成
+  - Phase 4 已完成：
+    - Task 4.1 TestFeedbackSummarizer
+  - 本任务在独立 worktree 完成：
+    - branch: task/4.2-feedback-agent-loop
+
+- 人工决策：
+  - 使用 Codex 将真实 TestFeedbackSummarizer 接入 AgentLoop
+  - 严格按照 SPEC.md 和 PLAN.md Task 4.2 范围实现
+  - 本任务只替换 feedback stub
+  - 不提前实现 Context Builder、Memory、Configuration、Session Manager、RealLLM、MockLLM、CLI/WebUI
+
+- AI辅助实现：
+  - 修改：
+    - safecode/core/agent_loop.py
+
+  - 新增测试：
+    - tests/test_feedback_loop_integration.py
+
+  - 实现：
+    - AgentLoop 默认创建真实 TestFeedbackSummarizer
+    - 保留显式注入 feedback_summarizer 的能力
+    - run_tests 后调用 summarizer.summarize(tool_result, session)
+    - 将 TestFeedback 写入当前 SessionStep.test_feedback
+
+  - 支持：
+    - pytest 失败输出解析为 failed 状态
+    - pytest 通过输出解析为 passed 状态
+    - 第二次 run_tests 与上一次 TestFeedback 做历史对比
+    - previous_failed_count 正确设置
+    - fixed_tests / unchanged_failures / progress_summary 正确生成
+    - 非 run_tests 工具不生成 test_feedback
+    - run_tests 全部通过后 StopController 可终止为 SUCCESS
+
+  - 使用 TDD：
+    - RED：验证默认 AgentLoop 使用 stub summarizer 时 failed_count 和 previous_failed_count 断言失败
+    - GREEN：接入真实 TestFeedbackSummarizer 并通过测试
+
+- 人工判断：
+  - 当前实现符合 Task 4.2 要求
+  - TestFeedback 已进入 AgentLoop 主执行管道
+  - Phase 4 测试反馈闭环阶段完成
+  - 下一步可进入 Phase 5 Context、Memory、Configuration
+
+- 验证结果：
+  - focused test:
+    - 4 passed
+
+  - full pytest:
+    - 183 passed
+
+- 当前状态：
+  - Task 4.2 验收通过
+  - Phase 4 Test Feedback 阶段完成
   - 等待 commit 和 Merge Request
