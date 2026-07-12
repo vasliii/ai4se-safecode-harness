@@ -946,7 +946,7 @@ Can run in parallel with：Task 5.1、Task 5.3
 
 ---
 
-### Task 5.3：Task Config Loader
+### Task 5.3：Task Config Loader （已完成 feat: implement task config loader）
 
 ### Goal
 实现 `TaskConfigLoader`，解析 `task.yaml` 并返回经过验证的 `TaskConfig`。
