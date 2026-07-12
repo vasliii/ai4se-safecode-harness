@@ -848,7 +848,7 @@ Can run in parallel with：（无）
 
 ## Phase 5：Context、Memory、Configuration
 
-### Task 5.1：Context Builder
+### Task 5.1：Context Builder （已完成 feat: implement context builder）
 
 ### Goal
 实现 `ContextBuilder`，构造每轮迭代中发送给 LLM 的 `ContextPayload`。
