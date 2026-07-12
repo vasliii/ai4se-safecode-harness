@@ -1769,3 +1769,69 @@
 - 当前状态：
   - Task 6.1 验收通过
   - 等待 commit 和 Merge Request
+
+## 2026-7-12 Task 4.6.2 完成 RealLLM Backend 实现
+
+- Superpowers：
+  - using-git-worktrees
+  - test-driven-development
+  - verification-before-completion
+
+- 当前上下文：
+  - Phase 5 已完成
+  - Phase 6 已完成：
+    - Task 6.1 Credential Manager
+  - 本任务在独立 worktree 完成：
+    - branch: task/6.2-real-llm
+
+- 人工决策：
+  - 使用 Codex 实现 RealLLM
+  - 只实现真实 LLM 后端调用代码
+  - 测试中不真实联网
+  - 不实现 MockLLM、LLM Factory、CLI、SessionManager 或 AgentLoop 修改
+
+- AI辅助实现：
+  - 创建：
+    - safecode/llm/real_llm.py
+
+  - 修改：
+    - safecode/llm/__init__.py
+
+  - 新增测试：
+    - tests/test_real_llm.py
+
+  - 实现：
+    - RealLLM(LLMBackend)
+    - __init__()
+    - query()
+    - _build_messages()
+    - _call_api()
+
+  - 支持：
+    - 根据 ContextPayload 构造 messages
+    - 使用 RuntimeConfig 中的 base_url / model / temperature
+    - 使用 CredentialManager 获取 API Key
+    - POST 到 OpenAI-compatible /chat/completions
+    - Authorization Bearer header
+    - 返回 choices[0].message.content
+    - API key 缺失时报 LLMError
+    - HTTP 错误时报 LLMError
+    - API error 响应时报 LLMError
+    - timeout 报 LLMTimeoutError
+    - 网络错误时报 LLMError
+    - 空 choices / 无效响应时报 LLMError
+
+  - 使用 TDD：
+    - RED：验证 RealLLM 无法从 safecode.llm 导入
+    - GREEN：实现 RealLLM 并通过测试
+
+- 验证结果：
+  - focused test:
+    - 10 passed
+
+  - full pytest:
+    - 247 passed
+
+- 当前状态：
+  - Task 6.2 验收通过
+  - 等待 commit 和 Merge Request
