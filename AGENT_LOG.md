@@ -1713,3 +1713,59 @@
   - Task 5.5 验收通过
   - Phase 5 Context、Memory、Configuration 阶段完成
   - 等待 commit 和 Merge Request
+
+## 2026-7-12 Task 4.6.1 完成 Credential Manager 实现
+
+- Superpowers：
+  - using-git-worktrees
+  - test-driven-development
+  - verification-before-completion
+
+- 当前上下文：
+  - Phase 5 已完成
+  - 进入 Phase 6 LLM Backends / Credentials
+  - 本任务在独立 worktree 完成：
+    - branch: task/6.1-credential-manager
+
+- 人工决策：
+  - 使用 Codex 实现 CredentialManager
+  - 只做 API Key 获取、设置、清除和状态检查
+  - 不实现 RealLLM、MockLLM、LLM Factory、CLI Auth 等后续任务
+
+- AI辅助实现：
+  - 创建：
+    - safecode/auth/__init__.py
+    - safecode/auth/credentials.py
+
+  - 新增测试：
+    - tests/test_credentials.py
+
+  - 实现：
+    - CredentialManager
+    - get_api_key()
+    - set_api_key()
+    - clear_api_key()
+    - status()
+
+  - 支持：
+    - keyring 优先
+    - SAFECODE_API_KEY 环境变量回退
+    - 当前目录 .env 回退
+    - keyring 异常时不崩溃
+    - status 只返回 configured / missing
+    - status 不泄露真实 API Key
+
+  - 使用 TDD：
+    - RED：验证 safecode.auth 模块不存在时测试失败
+    - GREEN：实现 CredentialManager 并通过测试
+
+- 验证结果：
+  - focused test:
+    - 10 passed
+
+  - full pytest:
+    - 237 passed
+
+- 当前状态：
+  - Task 6.1 验收通过
+  - 等待 commit 和 Merge Request
