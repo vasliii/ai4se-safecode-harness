@@ -1168,3 +1168,69 @@
 - 当前状态：
   - Task 3.4 验收通过
   - 等待 commit 和 Merge Request
+
+## 2026-7-12 Task 4.3.5 完成 Guardrail 与 Agent Loop 集成
+
+- Superpowers：
+  - using-git-worktrees
+  - verification-before-completion
+
+- 当前上下文：
+  - Phase 1 已完成基础 Harness 骨架
+  - Phase 2 已完成完整工具系统
+  - Phase 3 已完成：
+    - Task 3.1 PathGuard
+    - Task 3.2 SensitiveFileGuard
+    - Task 3.3 ShellGuard
+    - Task 3.4 Guardrail 编排器
+  - 本任务在独立 worktree 完成：
+    - branch: task/3.5-guardrail-agent-loop
+
+- 人工决策：
+  - 使用 Codex 将真实 Guardrail 接入 AgentLoop
+  - 严格按照 SPEC.md 和 PLAN.md Task 3.5 范围实现
+  - 本任务只替换 guardrail stub
+  - 不实现新 Guard、Tool 修改、Context Builder、Feedback、RealLLM 或 MockLLM
+
+- AI辅助实现：
+  - 修改：
+    - safecode/core/agent_loop.py
+
+  - 新增测试：
+    - tests/test_agent_loop_guardrail_integration.py
+
+  - 实现：
+    - AgentLoop 默认使用真实 Guardrail
+    - 根据 RuntimeConfig.shell_allowlist 创建 Guardrail
+    - 保留显式注入 guardrail 的测试路径
+
+  - 支持：
+    - PathGuard 在 AgentLoop 中生效
+    - SensitiveFileGuard 在 AgentLoop 中生效
+    - ShellGuard 在 AgentLoop 中生效
+    - 被拦截时递增 session.blocked_count
+    - 被拦截时记录 SessionStep.guardrail_result
+    - 被拦截时不执行 ToolDispatcher
+    - blocked_count 达到阈值后由 StopController 终止为 TERMINATED_BY_GUARDRAIL
+    - 危险动作后下一步安全动作仍可继续执行
+
+  - 使用 TDD：
+    - RED：验证默认 AgentLoop 使用 stub guardrail 时危险动作未被拦截
+    - GREEN：接入真实 Guardrail 并通过测试
+
+- 人工判断：
+  - 当前实现符合 Task 3.5 要求
+  - Guardrail 已进入 AgentLoop 主执行管道
+  - Phase 3 Guardrail 治理护栏阶段完成
+
+- 验证结果：
+  - focused test:
+    - 5 passed
+
+  - full pytest:
+    - 168 passed
+
+- 当前状态：
+  - Task 3.5 验收通过
+  - Phase 3 Guardrail 阶段完成
+  - 等待 commit 和 Merge Request

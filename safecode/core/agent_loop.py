@@ -8,6 +8,7 @@ from typing import Protocol
 from safecode.core.action_parser import ActionParser
 from safecode.core.exceptions import InvalidActionError
 from safecode.core.stop_controller import StopController
+from safecode.guardrail import Guardrail
 from safecode.llm import LLMBackend, LLMError
 from safecode.models import (
     ContextPayload,
@@ -57,11 +58,6 @@ class _StubContextBuilder:
         )
 
 
-class _StubGuardrail:
-    def check(self, action: ParsedAction, session: Session) -> GuardrailEvent | None:
-        return None
-
-
 class _StubToolDispatcher:
     def dispatch(self, action: ParsedAction, session: Session) -> ToolResult:
         return ToolResult(tool=action.tool, success=True, data={})
@@ -97,7 +93,7 @@ class AgentLoop:
     ) -> None:
         self.context_builder = context_builder or _StubContextBuilder()
         self.action_parser = action_parser or ActionParser()
-        self.guardrail = guardrail or _StubGuardrail()
+        self.guardrail = guardrail
         self.tool_dispatcher = tool_dispatcher or _StubToolDispatcher()
         self.feedback_summarizer = feedback_summarizer or _StubFeedbackSummarizer()
         self.stop_controller = stop_controller or StopController()
@@ -124,7 +120,8 @@ class AgentLoop:
                 self._append_error_step(session, context, llm_response, "action_parser", exc.reason)
                 continue
 
-            guardrail_event = self.guardrail.check(action, session)
+            guardrail = self.guardrail or Guardrail(config.shell_allowlist)
+            guardrail_event = guardrail.check(action, session)
             if guardrail_event is not None:
                 session.blocked_count += 1
                 session.steps.append(
