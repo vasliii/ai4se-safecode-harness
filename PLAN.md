@@ -985,7 +985,7 @@ Can run in parallel with：Task 5.1、Task 5.2
 
 ---
 
-### Task 5.4：Configuration Manager
+### Task 5.4：Configuration Manager （已完成 feat: implement configuration manager）
 
 ### Goal
 实现 `ConfigurationManager`，将来自 CLI 参数、环境变量、`config.yaml` 和内置默认值的配置合并为 `RuntimeConfig`。
