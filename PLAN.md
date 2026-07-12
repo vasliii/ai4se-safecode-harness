@@ -735,7 +735,7 @@ Can run in parallel with：（无——集成所有 guard）
 
 ---
 
-### Task 3.5：Guardrail 与 Agent Loop 集成
+### Task 3.5：Guardrail 与 Agent Loop 集成 （已完成 feat: integrate guardrail with agent loop）
 
 ### Goal
 将 `Guardrail` 接入 `AgentLoop`，用 mock LLM 验证完整的护栏管道。
