@@ -1387,3 +1387,71 @@
   - Task 4.2 验收通过
   - Phase 4 Test Feedback 阶段完成
   - 等待 commit 和 Merge Request
+
+## 2026-7-12 Task 4.5.1 完成 Context Builder 实现
+
+- Superpowers：
+  - using-git-worktrees
+  - test-driven-development
+  - verification-before-completion
+
+- 当前上下文：
+  - Phase 1 已完成基础 Harness 骨架
+  - Phase 2 已完成完整工具系统
+  - Phase 3 已完成 Guardrail 与 Agent Loop 集成
+  - Phase 4 已完成 Test Feedback 与 Agent Loop 集成
+  - 进入 Phase 5 Context、Memory、Configuration
+  - 本任务在独立 worktree 完成：
+    - branch: task/5.1-context-builder
+
+- 人工决策：
+  - 使用 Codex 实现 ContextBuilder
+  - 严格按照 SPEC.md 和 PLAN.md Task 5.1 范围实现
+  - 本任务只负责构造 ContextPayload
+  - 不提前实现 MemoryManager、TaskConfigLoader、ConfigurationManager、SessionManager 或 AgentLoop 集成
+
+- AI辅助实现：
+  - 创建：
+    - safecode/context/__init__.py
+    - safecode/context/builder.py
+
+  - 实现：
+    - ContextBuilder
+    - build()
+    - _build_system_prompt()
+    - _summarize_history()
+    - _build_workspace_tree()
+
+  - 支持：
+    - 空 session 构造 ContextPayload
+    - system_prompt 包含安全规则和 JSON action 要求
+    - task_description 来自 TaskConfig
+    - last_test_feedback 取最近一次测试反馈
+    - last_tool_result 取最近一次工具结果
+    - last_guardrail_event 取最近一次护栏事件
+    - workspace_tree 生成简洁文件树
+    - workspace_tree 忽略 .git / __pycache__ / .pytest_cache 等目录
+    - step_id / blocked_count / remaining_steps 正确填充
+    - context_budget_chars 下进行预算裁剪
+    - 系统提示和任务描述在预算较小时仍保留
+    - .env 内容和 API Key 样式字符串不进入上下文
+
+  - 使用 TDD：
+    - RED：验证 safecode.context 模块不存在时测试失败
+    - GREEN：实现 ContextBuilder 并通过测试
+
+- 人工判断：
+  - 当前实现符合 Task 5.1 要求
+  - ContextBuilder 已能为后续 LLM 调用构造结构化上下文
+  - AgentLoop 集成和会话生命周期编排留到后续任务
+
+- 验证结果：
+  - focused test:
+    - 11 passed
+
+  - full pytest:
+    - 194 passed
+
+- 当前状态：
+  - Task 5.1 验收通过
+  - 等待 commit 和 Merge Request
