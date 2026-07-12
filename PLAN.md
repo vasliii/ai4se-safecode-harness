@@ -813,7 +813,7 @@ Can run in parallel with：Phase 3 的任务
 
 ---
 
-### Task 4.2：Test Feedback 与 Agent Loop 集成
+### Task 4.2：Test Feedback 与 Agent Loop 集成 （已完成 feat: integrate test feedback with agent loop）
 
 ### Goal
 将 `TestFeedbackSummarizer` 接入 `AgentLoop`，用 mock LLM 验证反馈闭环。
