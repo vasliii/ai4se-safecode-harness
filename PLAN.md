@@ -1125,7 +1125,7 @@ Can run in parallel with：Task 6.2
 
 ---
 
-### Task 6.2：RealLLM Backend
+### Task 6.2：RealLLM Backend （已完成 feat: implement real llm backend）
 
 ### Goal
 实现 `RealLLM`，调用 OpenAI 兼容 API（Token Hub）并返回 LLM 响应。
