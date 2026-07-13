@@ -1364,7 +1364,7 @@ Can run in parallel with：Task 7.1、Task 7.2
 
 ---
 
-### Task 7.4：CLI Serve 命令
+### Task 7.4：CLI Serve 命令 （已完成 feat: implement cli serve command）
 
 ### Goal
 实现 `safecode serve` 命令，启动 WebUI 服务器。

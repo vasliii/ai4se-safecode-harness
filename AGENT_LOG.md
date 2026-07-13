@@ -2174,3 +2174,64 @@
 - 当前状态：
   - Task 7.3 验收通过
   - 等待 commit 和 Merge Request
+
+## 2026-7-13 Task 4.7.4 完成 CLI Serve 命令实现
+
+- Superpowers：
+  - using-git-worktrees
+  - test-driven-development
+  - verification-before-completion
+
+- 当前上下文：
+  - Phase 7 已完成：
+    - Task 7.1 CLI Auth 命令
+    - Task 7.2 CLI Run / Demo 命令
+    - Task 7.3 WebUI
+  - 本任务在独立 worktree 完成：
+    - branch: task/7.4-cli-serve
+
+- 人工决策：
+  - 使用 Codex 实现 safecode serve 命令
+  - 只实现 WebUI 启动入口
+  - 不扩展 WebUI、demo、Docker、Render、run/demo、LLM 或 SessionManager
+
+- AI辅助实现：
+  - 创建：
+    - safecode/cli/serve.py
+
+  - 修改：
+    - safecode/cli/main.py
+
+  - 新增测试：
+    - tests/test_cli_serve.py
+
+  - 实现：
+    - safecode serve
+    - safecode serve --host <host>
+    - safecode serve --port <port>
+    - safecode serve --host <host> --port <port>
+
+  - 支持：
+    - 默认 host 为 0.0.0.0
+    - 默认 port 为 8000
+    - 调用 uvicorn.run(app, host=host, port=port)
+    - 从 safecode.webui 导入 app
+    - 启动前输出 WebUI 地址
+    - KeyboardInterrupt 时优雅退出
+    - safecode --help 中可见 serve 命令
+
+  - 使用 TDD：
+    - RED：验证 safecode.cli.serve 模块不存在时测试失败
+    - GREEN：实现 serve_command 并注册到主 CLI 后通过测试
+
+- 验证结果：
+  - focused test:
+    - 6 passed
+
+  - full pytest:
+    - 297 passed
+
+- 当前状态：
+  - Task 7.4 验收通过
+  - Phase 7 CLI / WebUI 入口基本完成
+  - 等待 commit 和 Merge Request
