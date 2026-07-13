@@ -2017,3 +2017,79 @@
 - 当前状态：
   - Task 7.1 验收通过
   - 等待 commit 和 Merge Request
+
+## 2026-7-12 Task 4.7.2 完成 CLI Run / Demo 命令实现
+
+- Superpowers：
+  - using-git-worktrees
+  - test-driven-development
+  - verification-before-completion
+
+- 当前上下文：
+  - Phase 6 已完成：
+    - Credential Manager
+    - RealLLM Backend
+    - MockLLM Backend
+    - LLM Backend Factory
+  - Phase 7 已完成：
+    - Task 7.1 CLI Auth 命令
+  - 本任务在独立 worktree 完成：
+    - branch: task/7.2-cli-run-demo
+
+- 人工决策：
+  - 使用 Codex 实现 CLI run / demo 命令
+  - CLI 只负责装配和展示，不重新实现 SessionManager 生命周期逻辑
+  - mock 模式不检查真实 API key
+  - 不实现 WebUI、serve、demo 任务定义、Docker、Render、README
+  - 不修改 RealLLM、MockLLM 或 SessionManager
+
+- AI辅助实现：
+  - 创建：
+    - safecode/cli/run.py
+    - safecode/cli/demo.py
+
+  - 修改：
+    - safecode/cli/main.py
+
+  - 新增测试：
+    - tests/test_cli_run_demo.py
+
+  - 实现：
+    - safecode run --workspace <path>
+    - safecode run --workspace <path> --mock
+    - safecode demo list
+    - safecode demo run <demo-id>
+    - safecode demo run <demo-id> --mock
+
+  - 支持：
+    - --max-iterations
+    - --model
+    - --keep-session
+    - --timeout
+    - 从 workspace/task.yaml 加载 TaskConfig
+    - 加载 RuntimeConfig 并应用 CLI 覆盖
+    - 真实模式检查 API key
+    - 真实模式无 API key 时提示 safecode auth set
+    - mock 模式使用默认 finish mock action
+    - mock 模式不检查真实 API key
+    - demo list 扫描 demo task.yaml
+    - demo run 复用 run 执行逻辑
+    - workspace 不存在报错
+    - task.yaml 不存在报错
+    - demo id 不存在报错
+    - 输出 final_status
+
+  - 使用 TDD：
+    - RED：验证 safecode.cli.demo 模块不存在时测试失败
+    - GREEN：实现 CLI run / demo 并通过测试
+
+- 验证结果：
+  - focused test:
+    - 9 passed
+
+  - full pytest:
+    - 281 passed
+
+- 当前状态：
+  - Task 7.2 验收通过
+  - 等待 commit 和 Merge Request

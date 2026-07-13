@@ -1273,7 +1273,7 @@ Can run in parallel with：Task 7.2
 
 ---
 
-### Task 7.2：CLI——Run 命令
+### Task 7.2：CLI——Run 命令 （已完成 feat: implement cli run and demo commands）
 
 ### Goal
 实现 `safecode run` 和 `safecode demo` 子命令。
