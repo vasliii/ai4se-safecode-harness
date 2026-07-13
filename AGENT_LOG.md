@@ -1953,3 +1953,67 @@
   - Task 6.4 验收通过
   - Phase 6 LLM Backend 基础能力完成
   - 等待 commit 和 Merge Request
+
+## 2026-7-12 Task 4.7.1 完成 CLI Auth 命令实现
+
+- Superpowers：
+  - using-git-worktrees
+  - test-driven-development
+  - verification-before-completion
+
+- 当前上下文：
+  - Phase 6 已完成：
+    - Task 6.1 Credential Manager
+    - Task 6.2 RealLLM Backend
+    - Task 6.3 MockLLM Backend
+    - Task 6.4 LLM Backend Factory
+  - 进入 Phase 7 CLI
+  - 本任务在独立 worktree 完成：
+    - branch: task/7.1-cli-auth
+
+- 人工决策：
+  - 使用 Codex 实现 CLI Auth 命令
+  - 只实现 safecode auth set/status/clear
+  - 不实现 run、demo、serve、WebUI、SessionManager 或 LLM 修改
+
+- AI辅助实现：
+  - 创建：
+    - safecode/cli/auth.py
+
+  - 修改：
+    - safecode/cli/main.py
+    - safecode/cli/__init__.py
+
+  - 新增测试：
+    - tests/test_cli_auth.py
+
+  - 实现：
+    - Typer auth 子命令组
+    - safecode auth set
+    - safecode auth status
+    - safecode auth clear
+
+  - 支持：
+    - auth set 使用 getpass.getpass("Enter API Key: ")
+    - 空 key 输出 Key cannot be empty
+    - set 成功后输出 API Key saved successfully
+    - keyring 写入失败时输出错误并建议使用 SAFECODE_API_KEY
+    - auth status 输出 configured / missing
+    - auth status 不泄露真实 API Key
+    - auth clear 调用 CredentialManager.clear_api_key()
+    - clear 成功后输出 API Key cleared
+
+  - 使用 TDD：
+    - RED：验证 safecode.cli.auth 模块不存在时测试失败
+    - GREEN：实现 CLI Auth 并通过测试
+
+- 验证结果：
+  - focused test:
+    - 9 passed
+
+  - full pytest:
+    - 272 passed
+
+- 当前状态：
+  - Task 7.1 验收通过
+  - 等待 commit 和 Merge Request

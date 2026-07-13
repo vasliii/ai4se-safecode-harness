@@ -1,4 +1,4 @@
-"""Command line interface package for SafeCode Harness."""
+﻿"""Command line interface package for SafeCode Harness."""
 
 from safecode.cli.main import app
 
