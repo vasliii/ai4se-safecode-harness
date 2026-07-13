@@ -1,0 +1,9 @@
+﻿services:
+  safecode:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - SAFECODE_API_KEY=${SAFECODE_API_KEY:-}
+      - SAFECODE_MODEL=${SAFECODE_MODEL:-}
+      - SAFECODE_BASE_URL=${SAFECODE_BASE_URL:-}

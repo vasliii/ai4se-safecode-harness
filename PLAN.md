@@ -1444,7 +1444,7 @@ Can run in parallel with：Task 8.2
 
 ---
 
-### Task 8.2：Docker 部署
+### Task 8.2：Docker 部署 （已完成 build: configure docker webui deployment）
 
 ### Goal
 完成 Docker 配置，构建并运行完整项目，包括 WebUI 和 demo 任务。

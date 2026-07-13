@@ -2291,3 +2291,63 @@
 - 当前状态：
   - Task 8.1 验收通过
   - 等待 commit 和 Merge Request
+
+## 2026-7-13 Task 4.8.2 完成 Docker 部署配置
+
+- Superpowers：
+  - using-git-worktrees
+  - test-driven-development
+  - verification-before-completion
+
+- 当前上下文：
+  - Task 8.1 已完成：
+    - guardrail_block demo
+    - fix_bug demo
+    - complete_function demo
+  - 本任务在独立 worktree 完成：
+    - branch: task/8.2-docker-deployment
+
+- 人工决策：
+  - 使用 Codex 完成 Docker 交付配置
+  - Docker 默认入口改为启动 WebUI
+  - 不实现 Render、README、WebUI 新功能、CLI 新功能或核心逻辑修改
+
+- AI辅助实现：
+  - 修改：
+    - Dockerfile
+    - tests/test_docker_config.py
+
+  - 创建：
+    - docker-compose.yml
+    - tests/test_docker_deployment.py
+
+  - 实现：
+    - Dockerfile 默认 CMD 改为 safecode serve --host 0.0.0.0 --port 8000
+    - 保留 python:3.10-slim
+    - 保留 pip install -e .
+    - 保留非 root 用户 safecode
+    - 保留 EXPOSE 8000
+    - docker-compose.yml 映射 8000:8000
+    - docker-compose.yml 支持透传 SAFECODE_API_KEY / SAFECODE_MODEL / SAFECODE_BASE_URL
+    - 未硬编码真实 API key
+
+  - 使用 TDD：
+    - RED：Dockerfile 仍为 safecode --help，且 docker-compose.yml 不存在
+    - GREEN：更新 Dockerfile 和新增 docker-compose.yml 后通过测试
+
+- 验证结果：
+  - Docker 相关测试：
+    - 9 passed
+
+  - full pytest:
+    - 310 passed
+
+  - Docker 实机验证：
+    - docker build 未完成
+    - 原因：本机 Docker daemon 当前不可用
+    - 错误：failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine
+
+- 当前状态：
+  - Task 8.2 代码与配置层面验收通过
+  - Docker build/run 需在 Docker Desktop 启动后手动补验
+  - 等待 commit 和 Merge Request
