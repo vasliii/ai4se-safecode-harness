@@ -6,32 +6,9 @@ from safecode.models import SessionStatus
 
 from .conftest import run_demo_session
 
-OLD_ADD = '''def add(a: int | float, b: int | float) -> int | float:
-    """Return the sum of two numbers."""
-    return a - b'''
-
-NEW_ADD = '''def add(a: int | float, b: int | float) -> int | float:
-    """Return the sum of two numbers."""
-    return a + b'''
-
 
 def test_fix_bug_demo_shows_feedback_loop_to_success():
-    session = run_demo_session(
-        "fix_bug",
-        [
-            {"tool": "run_tests", "params": {}},
-            {
-                "tool": "edit_file",
-                "params": {
-                    "path": "src/calculator.py",
-                    "old_text": OLD_ADD,
-                    "new_text": NEW_ADD,
-                },
-            },
-            {"tool": "run_tests", "params": {}},
-            {"tool": "finish", "params": {"summary": "Fixed calculator.add."}},
-        ],
-    )
+    session = run_demo_session("fix_bug")
 
     assert session.final_status is SessionStatus.SUCCESS
     assert not [step for step in session.steps if step.guardrail_result is not None]

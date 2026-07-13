@@ -191,6 +191,45 @@ def test_api_run_mock_returns_session_payload(tmp_path, monkeypatch):
     assert fake_create_llm_backend.calls[0]["mock"] is True
 
 
+def test_api_run_mock_guardrail_block_uses_demo_script():
+    webui_module.SESSIONS.clear()
+    response = TestClient(app).post("/api/run/guardrail_block", json={"mode": "mock"})
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["final_status"] == "terminated_by_guardrail"
+    assert [step["action"] for step in data["steps"]] == ["run_shell", "read_file", "read_file"]
+    reasons = {step["guardrail_reason"] for step in data["steps"]}
+    assert "dangerous_shell_command" in reasons
+    assert "sensitive_file_access" in reasons
+    assert "path_outside_workspace" in reasons
+
+
+def test_api_run_mock_fix_bug_uses_demo_script():
+    webui_module.SESSIONS.clear()
+    response = TestClient(app).post("/api/run/fix_bug", json={"mode": "mock"})
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["final_status"] == "success"
+    assert [step["action"] for step in data["steps"][:3]] == ["run_tests", "edit_file", "run_tests"]
+
+
+def test_api_run_mock_complete_function_uses_demo_script():
+    webui_module.SESSIONS.clear()
+    response = TestClient(app).post("/api/run/complete_function", json={"mode": "mock"})
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["final_status"] == "success"
+    assert [step["action"] for step in data["steps"][:4]] == [
+        "list_files",
+        "read_file",
+        "edit_file",
+        "run_tests",
+    ]
+
+
 def test_api_run_unknown_demo_returns_404(tmp_path, monkeypatch):
     client = setup_webui(monkeypatch, tmp_path)
 

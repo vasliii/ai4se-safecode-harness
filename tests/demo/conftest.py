@@ -7,6 +7,7 @@ import shutil
 
 from safecode.config import TaskConfigLoader
 from safecode.core.session_manager import SessionManager
+from safecode.demos.mock_actions import get_demo_mock_actions
 from safecode.llm import MockLLM
 from safecode.models import RuntimeConfig, Session, TaskConfig
 
@@ -26,7 +27,7 @@ def load_demo_task(demo_id: str) -> TaskConfig:
 
 def run_demo_session(
     demo_id: str,
-    actions: list[dict],
+    actions: list[dict] | None = None,
     *,
     max_iterations: int | None = None,
     guardrail_threshold: int = 3,
@@ -34,10 +35,13 @@ def run_demo_session(
     """Run a packaged demo with scripted MockLLM actions."""
     _remove_demo_caches()
     task_config = load_demo_task(demo_id)
+    scripted_actions = actions if actions is not None else get_demo_mock_actions(demo_id)
+    if scripted_actions is None:
+        raise ValueError(f"No mock actions configured for demo: {demo_id}")
     config = RuntimeConfig(guardrail_threshold=guardrail_threshold)
     if max_iterations is not None:
         config.max_iterations = max_iterations
-    return SessionManager(config, MockLLM(actions=actions)).run(task_config, keep_session=False)
+    return SessionManager(config, MockLLM(actions=scripted_actions)).run(task_config, keep_session=False)
 
 
 def _remove_demo_caches() -> None:

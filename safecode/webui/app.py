@@ -13,9 +13,9 @@ from fastapi.templating import Jinja2Templates
 from safecode.auth import CredentialManager
 from safecode.config import ConfigurationManager, TaskConfigLoader
 from safecode.core.session_manager import SessionManager
+from safecode.demos.mock_actions import get_demo_mock_actions
 from safecode.llm import create_llm_backend
 from safecode.models import RuntimeConfig, Session, TaskConfig
-from safecode.cli.run import DEFAULT_MOCK_ACTIONS
 
 PACKAGE_ROOT = Path(__file__).resolve().parent
 DEMO_ROOT = PACKAGE_ROOT.parent / "demos"
@@ -73,7 +73,7 @@ async def api_run_demo(demo_id: str, request: Request) -> dict[str, Any]:
         config,
         credential_manager,
         mock=mock,
-        mock_actions=DEFAULT_MOCK_ACTIONS if mock else None,
+        mock_actions=get_demo_mock_actions(demo_id) if mock else None,
     )
     session = SessionManager(config, llm_backend).run(task_config, keep_session=False)
     summary = session_to_payload(session)

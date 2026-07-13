@@ -62,6 +62,7 @@ def run_task_config(
     *,
     task_config: TaskConfig,
     mock: bool,
+    mock_actions: list[dict[str, Any]] | None = None,
     max_iterations: int | None = None,
     model: str | None = None,
     keep_session: bool = False,
@@ -82,7 +83,7 @@ def run_task_config(
         config,
         credential_manager,
         mock=mock,
-        mock_actions=DEFAULT_MOCK_ACTIONS if mock else None,
+        mock_actions=(mock_actions if mock_actions is not None else DEFAULT_MOCK_ACTIONS) if mock else None,
     )
     session = SessionManager(config, llm_backend).run(task_config, keep_session=keep_session)
     print_session_trace(session)

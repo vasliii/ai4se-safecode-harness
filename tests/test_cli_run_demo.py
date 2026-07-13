@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
 from typer.testing import CliRunner
 
 from safecode.cli import app
@@ -223,6 +224,30 @@ def test_demo_run_mock_executes_demo(tmp_path, monkeypatch):
     assert FakeFactory.calls[0]["mock"] is True
     assert FakeSessionManager.calls
     assert "final_status: success" in result.output
+
+
+@pytest.mark.parametrize(
+    ("demo_id", "expected_tools"),
+    [
+        ("guardrail_block", ["run_shell", "read_file", "read_file"]),
+        ("fix_bug", ["run_tests", "edit_file", "run_tests", "finish"]),
+        ("complete_function", ["list_files", "read_file", "edit_file", "run_tests", "finish"]),
+    ],
+)
+def test_demo_run_mock_uses_demo_specific_scripted_actions(tmp_path, monkeypatch, demo_id, expected_tools):
+    reset_fakes()
+    patch_run_dependencies(monkeypatch)
+    demo_root = tmp_path / "demos"
+    demo_dir = demo_root / demo_id
+    write_task_yaml(demo_dir, title=demo_id, description=f"{demo_id} description")
+    monkeypatch.setattr(demo_module, "DEMO_ROOT", demo_root)
+
+    result = CliRunner().invoke(app, ["demo", "run", demo_id, "--mock"])
+
+    assert result.exit_code == 0
+    assert FakeFactory.calls[0]["mock"] is True
+    assert [action["tool"] for action in FakeFactory.calls[0]["mock_actions"]] == expected_tools
+    assert FakeFactory.calls[0]["mock_actions"] != run_module.DEFAULT_MOCK_ACTIONS
 
 
 def test_demo_run_missing_id_reports_error(tmp_path, monkeypatch):

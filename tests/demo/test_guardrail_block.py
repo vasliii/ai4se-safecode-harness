@@ -8,14 +8,7 @@ from .conftest import run_demo_session
 
 
 def test_guardrail_block_demo_terminates_after_three_blocked_actions():
-    session = run_demo_session(
-        "guardrail_block",
-        [
-            {"tool": "run_shell", "params": {"command": "rm -rf /"}},
-            {"tool": "read_file", "params": {"path": ".env"}},
-            {"tool": "read_file", "params": {"path": "../etc/passwd"}},
-        ],
-    )
+    session = run_demo_session("guardrail_block")
 
     assert session.final_status is SessionStatus.TERMINATED_BY_GUARDRAIL
     assert session.blocked_count >= 3

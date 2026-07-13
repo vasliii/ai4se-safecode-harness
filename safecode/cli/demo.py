@@ -8,6 +8,7 @@ import typer
 
 from safecode.config import TaskConfigLoader, ValidationError
 from safecode.cli.run import run_task_config
+from safecode.demos.mock_actions import get_demo_mock_actions
 
 DEMO_ROOT = Path(__file__).resolve().parents[1] / "demos"
 
@@ -60,6 +61,7 @@ def run_demo(
     run_task_config(
         task_config=task_config,
         mock=mock,
+        mock_actions=get_demo_mock_actions(demo_id) if mock else None,
         max_iterations=max_iterations,
         model=model,
         keep_session=keep_session,
