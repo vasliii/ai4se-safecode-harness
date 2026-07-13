@@ -1543,7 +1543,7 @@ Can run in parallel with：Task 9.3（文档）
 
 ---
 
-### Task 9.2：机制演示脚本
+### Task 9.2：机制演示脚本 （已完成 test: add mock demo mechanism tests）
 
 ### Goal
 创建 SPEC §9.3 和 A.6 中指定的三个机制演示脚本。

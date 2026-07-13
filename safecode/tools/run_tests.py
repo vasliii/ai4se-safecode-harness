@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import shlex
 import subprocess
+import sys
 from typing import Any
 
 from safecode.models import Session, ToolResult
@@ -27,7 +28,7 @@ class RunTestsTool(Tool):
         try:
             self.validate_params(params)
             command = self._build_command(params)
-            command_text = " ".join(command)
+            command_text = self._display_command(command)
             completed = subprocess.run(
                 command,
                 cwd=session.workspace_root,
@@ -66,11 +67,16 @@ class RunTestsTool(Tool):
             return ToolResult(tool=self.name, success=False, error=str(exc))
 
     def _build_command(self, params: dict[str, Any]) -> list[str]:
-        command = ["pytest"]
+        command = [sys.executable, "-m", "pytest"]
         args = params.get("args")
         if args:
             command.extend(shlex.split(args))
         return command
+
+    def _display_command(self, command: list[str]) -> str:
+        if len(command) >= 3 and command[1:3] == ["-m", "pytest"]:
+            return " ".join(["pytest", *command[3:]])
+        return " ".join(command)
 
     def _result_data(
         self,

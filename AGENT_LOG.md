@@ -2469,3 +2469,80 @@
   - Task 9.1 验收通过
   - 无代码或配置修改
   - 等待记录验证结果并提交空提交或按项目要求跳过代码提交
+
+## 2026-7-13 Task 4.9.2 完成机制演示脚本
+
+- Superpowers：
+  - using-git-worktrees
+  - test-driven-development
+  - verification-before-completion
+
+- 当前上下文：
+  - Task 9.1 已完成完整测试与 coverage 验证
+  - 本任务在独立 worktree 完成：
+    - branch: task/9.2-demo-scripts
+
+- 人工决策：
+  - 使用 Codex 创建 mock-only 机制演示 pytest 脚本
+  - 本任务只做 demo tests
+  - 不修改 PLAN.md / AGENT_LOG.md
+  - 不修改 WebUI、CLI、Docker、Render、README
+
+- AI辅助实现：
+  - 创建：
+    - tests/demo/__init__.py
+    - tests/demo/conftest.py
+    - tests/demo/test_guardrail_block.py
+    - tests/demo/test_fix_bug_feedback.py
+    - tests/demo/test_complete_function.py
+
+  - 修改：
+    - safecode/tools/run_tests.py
+    - tests/test_run_tests_tool.py
+
+  - 实现演示：
+    - Guardrail Block：
+      - 覆盖 dangerous_shell_command
+      - 覆盖 sensitive_file_access
+      - 覆盖 path_outside_workspace
+      - 验证 final_status 为 TERMINATED_BY_GUARDRAIL
+
+    - Fix Bug Feedback Loop：
+      - 第一次 run_tests 失败
+      - edit_file 修复 calculator.add
+      - 第二次 run_tests 通过
+      - 验证 final_status 为 SUCCESS
+
+    - Complete Function Synergy：
+      - list_files
+      - read_file
+      - edit_file 补全函数
+      - run_tests 通过
+      - 验证 final_status 为 SUCCESS
+
+  - 最小兼容修正：
+    - RunTestsTool 内部改为执行 python -m pytest
+    - ToolResult.data["command"] 仍显示为 pytest
+    - 目的：确保复制后的 workspace 中 pytest 能正确导入本地 src 包
+    - 外部语义保持不变
+
+  - 使用 TDD：
+    - RED：tests/demo/ 不存在导致 demo pytest 失败
+    - GREEN：新增三个机制演示脚本后通过测试
+
+- 验证结果：
+  - demo tests:
+    - 3 passed
+
+  - full pytest:
+    - 320 passed
+
+  - 网络 / API Key 依赖：
+    - 未发现真实网络依赖
+    - 未发现真实 LLM 依赖
+    - 未发现真实 API key 依赖
+    - 三个 demo 均使用 MockLLM
+
+- 当前状态：
+  - Task 9.2 验收通过
+  - 等待 commit 和 Merge Request
