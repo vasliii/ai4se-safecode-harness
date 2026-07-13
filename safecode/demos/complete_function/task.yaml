@@ -1,0 +1,35 @@
+﻿id: complete_function
+title: "Complete calculator.add"
+task_type: complete_function
+description: "Complete the add function in src/calculator.py so the tests pass."
+workspace_template: .
+test_command: pytest
+max_iterations: 8
+timeout_seconds: 180
+allowed_files:
+  - src/calculator.py
+  - tests/test_calculator.py
+read_only_files:
+  - tests/test_calculator.py
+allowed_tools:
+  - list_files
+  - read_file
+  - write_file
+  - edit_file
+  - run_tests
+forbidden_tools:
+  - run_shell
+success_criteria:
+  - pytest_passes
+  - calculator_add_implemented
+expected_final_files:
+  - src/calculator.py
+  - tests/test_calculator.py
+mock_scenario: complete_function_feedback_loop
+demo_visible: true
+demo_order: 3
+expected_trace_events:
+  - read_file
+  - edit_file_applied
+  - run_tests_failed
+  - tests_passed

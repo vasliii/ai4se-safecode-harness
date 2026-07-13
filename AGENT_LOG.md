@@ -2235,3 +2235,59 @@
   - Task 7.4 验收通过
   - Phase 7 CLI / WebUI 入口基本完成
   - 等待 commit 和 Merge Request
+
+## 2026-7-13 Task 4.8.1 完成 Demo 任务定义
+
+- Superpowers：
+  - using-git-worktrees
+  - test-driven-development
+  - verification-before-completion
+
+- 当前上下文：
+  - Phase 7 已完成：
+    - CLI Auth
+    - CLI Run / Demo
+    - WebUI
+    - CLI Serve
+  - 进入 Phase 8 Demo 与交付配置
+  - 本任务在独立 worktree 完成：
+    - branch: task/8.1-demo-tasks
+
+- 人工决策：
+  - 使用 Codex 创建三个内置 demo 任务
+  - 本任务只创建 demo 配置和工作区模板
+  - 不修改 CLI、WebUI、RealLLM、MockLLM、SessionManager、AgentLoop、Docker、Render 或 README
+
+- AI辅助实现：
+  - 创建：
+    - safecode/demos/guardrail_block/task.yaml
+    - safecode/demos/guardrail_block/README.md
+    - safecode/demos/fix_bug/task.yaml
+    - safecode/demos/fix_bug/src/calculator.py
+    - safecode/demos/fix_bug/tests/test_calculator.py
+    - safecode/demos/complete_function/task.yaml
+    - safecode/demos/complete_function/src/calculator.py
+    - safecode/demos/complete_function/tests/test_calculator.py
+
+  - 新增测试：
+    - tests/test_demo_tasks.py
+
+  - 实现：
+    - guardrail_block demo：用于展示护栏拦截
+    - fix_bug demo：calculator.add 初始存在 bug
+    - complete_function demo：calculator.add 初始为 pass/TODO
+
+  - 使用 TDD：
+    - RED：三个 demo 目录和 task.yaml 不存在导致测试失败
+    - GREEN：创建 demo 配置和工作区模板后通过测试
+
+- 验证结果：
+  - focused test:
+    - 6 passed
+
+  - full pytest:
+    - 303 passed
+
+- 当前状态：
+  - Task 8.1 验收通过
+  - 等待 commit 和 Merge Request

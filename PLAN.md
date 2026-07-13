@@ -1395,7 +1395,7 @@ Can run in parallel with：（无）
 
 ## Phase 8：Demo 任务与部署
 
-### Task 8.1：Demo 任务定义
+### Task 8.1：Demo 任务定义 （已完成 feat: add built-in demo tasks）
 
 ### Goal
 创建三个 demo 任务的 `task.yaml` 文件及其工作区模板，用于机制演示。
