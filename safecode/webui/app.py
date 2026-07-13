@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import re
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
@@ -27,6 +28,12 @@ templates = Jinja2Templates(directory=str(TEMPLATE_ROOT))
 app.mount("/static", StaticFiles(directory=str(STATIC_ROOT)), name="static")
 
 SESSIONS: dict[str, dict[str, Any]] = {}
+LLM_RESPONSE_SUMMARY_LIMIT = 500
+SECRET_PATTERNS = (
+    re.compile(r"(?i)bearer\s+[A-Za-z0-9._~+/=-]+"),
+    re.compile(r"sk-[A-Za-z0-9_-]{8,}"),
+    re.compile(r"(?i)(api[_-]?key|token|secret)\s*[=:]\s*[^\s,'\"}]+"),
+)
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -148,7 +155,7 @@ def _step_payload(step: Any) -> dict[str, Any]:
     tool_result = step.tool_result
     test_feedback = step.test_feedback
     guardrail = step.guardrail_result
-    return {
+    payload = {
         "step_id": step.step_id,
         "action": parsed_action.tool if parsed_action is not None else None,
         "params": parsed_action.params if parsed_action is not None else None,
@@ -158,8 +165,23 @@ def _step_payload(step: Any) -> dict[str, Any]:
         "guardrail_reason": guardrail.reason if guardrail is not None else None,
         "guardrail_summary": guardrail.action_summary if guardrail is not None else None,
     }
+    if tool_result is not None and tool_result.tool == "action_parser" and not tool_result.success:
+        payload["parser_error"] = tool_result.error
+        payload["llm_response_summary"] = _summarize_llm_response(step.llm_response)
+    return payload
 
 
 def _status_value(status: object) -> str:
     return status.value if hasattr(status, "value") else str(status)
+
+
+def _summarize_llm_response(response: str | None) -> str:
+    if not response:
+        return ""
+    redacted = response
+    for pattern in SECRET_PATTERNS:
+        redacted = pattern.sub("[REDACTED]", redacted)
+    if len(redacted) <= LLM_RESPONSE_SUMMARY_LIMIT:
+        return redacted
+    return redacted[:LLM_RESPONSE_SUMMARY_LIMIT].rstrip() + "\n[truncated]"
 

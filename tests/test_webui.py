@@ -281,3 +281,48 @@ def test_api_status_unknown_session_returns_404(tmp_path, monkeypatch):
 
     assert response.status_code == 404
 
+
+def test_session_payload_includes_redacted_parser_error_summary(tmp_path: Path) -> None:
+    context = ContextPayload(
+        system_prompt="system",
+        task_description="task",
+        step_id=0,
+        blocked_count=0,
+        remaining_steps=1,
+    )
+    raw_response = (
+        "I cannot comply. Bearer secret-token-123 sk-abcdefghijklmnopqrstuvwxyz "
+        + "x" * 1200
+    )
+    session = Session(
+        session_id="parser-failure",
+        task_config=TaskConfig(
+            id="task",
+            title="Task",
+            task_type="fix_bug",
+            description="Task",
+            workspace_template=str(tmp_path),
+            test_command="pytest",
+        ),
+        workspace_root=tmp_path,
+        llm_backend="real",
+        steps=[
+            SessionStep(
+                step_id=0,
+                llm_request=context,
+                llm_response=raw_response,
+                tool_result=ToolResult(tool="action_parser", success=False, error="invalid_json"),
+            )
+        ],
+    )
+
+    payload = webui_module.session_to_payload(session)
+    step = payload["steps"][0]
+
+    assert step["parser_error"] == "invalid_json"
+    assert "llm_response_summary" in step
+    assert len(step["llm_response_summary"]) <= 520
+    assert "Bearer secret-token-123" not in step["llm_response_summary"]
+    assert "sk-abcdefghijklmnopqrstuvwxyz" not in step["llm_response_summary"]
+    assert "[REDACTED]" in step["llm_response_summary"]
+

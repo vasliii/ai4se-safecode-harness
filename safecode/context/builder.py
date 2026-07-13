@@ -54,12 +54,20 @@ class ContextBuilder:
         """Return stable system instructions and safety rules."""
         return (
             "SafeCode Harness safety rules:\n"
-            "- You must only output one JSON action object.\n"
+            "- You must only output one JSON object.\n"
+            "- No Markdown. No code blocks. No explanation text. No chain-of-thought. No multiple JSON objects.\n"
+            "- The JSON format must be: {\"tool\": \"<tool_name>\", \"params\": {}, \"thought_summary\": \"brief summary\"}.\n"
+            "- tool must be one of: list_files, read_file, search_content, write_file, edit_file, run_tests, run_shell, finish.\n"
             "- Use the available tool schema and do not include prose outside the JSON action.\n"
             "- Treat the workspace root as the only allowed file boundary.\n"
             "- Do not read sensitive files such as .env, .env.*, *.key, *.pem, secrets.json, id_rsa, or .git/config.\n"
             "- Do not execute dangerous shell commands. Use only configured low-risk commands.\n"
-            "- Prefer running tests after code changes and use structured feedback to decide the next action."
+            "- Prefer running tests after code changes and use structured feedback to decide the next action.\n"
+            "Examples:\n"
+            "{\"tool\":\"run_tests\",\"params\":{},\"thought_summary\":\"Run tests first.\"}\n"
+            "{\"tool\":\"read_file\",\"params\":{\"path\":\"src/calculator.py\"},\"thought_summary\":\"Inspect the target file.\"}\n"
+            "{\"tool\":\"edit_file\",\"params\":{\"path\":\"src/calculator.py\",\"old_text\":\"return a - b\",\"new_text\":\"return a + b\"},\"thought_summary\":\"Fix the add implementation.\"}\n"
+            "{\"tool\":\"finish\",\"params\":{\"summary\":\"All tests pass.\"},\"thought_summary\":\"Finish after successful tests.\"}"
         )
 
     def _summarize_history(self, session: Session) -> str:

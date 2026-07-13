@@ -45,7 +45,15 @@ def test_system_prompt_contains_safety_and_json_action_requirements(tmp_path: Pa
     prompt = context.system_prompt.lower()
 
     assert "safety rules" in prompt
-    assert "json action" in prompt
+    assert "only output one json" in prompt or "only one json" in prompt
+    assert "no markdown" in prompt
+    assert "no explanation" in prompt
+    assert "tool" in prompt
+    assert "params" in prompt
+    assert "thought_summary" in prompt
+    assert "run_tests" in prompt
+    assert "edit_file" in prompt
+    assert "finish" in prompt
     assert "workspace" in prompt
     assert "sensitive" in prompt
     assert ".env" in prompt

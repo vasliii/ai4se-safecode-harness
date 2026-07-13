@@ -53,7 +53,7 @@ class ActionParser:
     """Parse and validate JSON actions returned by an LLM backend."""
 
     def parse(self, response: str) -> ParsedAction:
-        cleaned_response = self._strip_markdown_code_block(response)
+        cleaned_response = self._extract_json_object(self._strip_markdown_code_block(response))
         payload = self._load_json(cleaned_response)
 
         if not isinstance(payload, dict):
@@ -88,6 +88,23 @@ class ActionParser:
         if match:
             return match.group(1).strip()
         return response.strip()
+
+    def _extract_json_object(self, response: str) -> str:
+        stripped = response.strip()
+        if not stripped:
+            return stripped
+
+        decoder = json.JSONDecoder()
+        for index, character in enumerate(stripped):
+            if character != "{":
+                continue
+            try:
+                payload, end = decoder.raw_decode(stripped[index:])
+            except json.JSONDecodeError:
+                continue
+            if isinstance(payload, dict):
+                return stripped[index : index + end].strip()
+        return stripped
 
     def _valid_params(self, params: dict[str, Any], schema: dict[str, ParamSpec]) -> bool:
         for name, (expected_type, required) in schema.items():
