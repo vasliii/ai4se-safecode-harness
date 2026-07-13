@@ -1,93 +1,344 @@
-# ai4se-safecode-harness
+# SafeCode Harness
 
+SafeCode Harness 是一个面向软件工程任务的最小但完整的 Coding Agent Harness。它让 LLM 在受控工作区中通过结构化 action 调用工具、读取反馈、接受护栏检查，并最终完成代码任务。
 
+本项目不是普通聊天式 AI 应用。它的核心价值在于 Harness 侧的确定性机制：Pipeline Architecture、Action Parser、Guardrail、Tool Dispatcher、Test Feedback、Context Builder、Memory Trace、Configuration 和 CLI/WebUI。真实 LLM 只是其中一个后端；MockLLM 用于离线、确定性地验证同一套执行机制。
 
-## Getting started
+项目重点展示：
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+- 确定性 Guardrail：路径逃逸、敏感文件访问、危险 shell 命令由代码拦截。
+- 测试反馈闭环：`run_tests` 输出被解析为结构化 `TestFeedback`，回灌到下一轮上下文。
+- 上下文管理：每轮 LLM 调用由 `ContextBuilder` 构造受预算约束的 `ContextPayload`。
+- MockLLM 验证：不依赖真实网络、真实 LLM 或 API Key，也能复现核心机制。
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## 安装方式
 
-## Add your files
+前置要求：
 
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+- Python 3.10+
+- Git
+- 可选：Docker Desktop 或兼容 Docker 环境
 
+安装：
+
+```bash
+git clone https://git.nju.edu.cn/241880139/ai4se-safecode-harness.git
+cd ai4se-safecode-harness
+python -m pip install -e .
 ```
-cd existing_repo
-git remote add origin https://git.nju.edu.cn/241880139/ai4se-safecode-harness.git
-git branch -M main
-git push -uf origin main
+
+开发环境可安装测试依赖：
+
+```bash
+python -m pip install -e .[dev]
 ```
 
-## Integrate with your tools
+安装后应能看到 CLI：
 
-* [Set up project integrations](https://git.nju.edu.cn/241880139/ai4se-safecode-harness/-/settings/integrations)
+```bash
+safecode --help
+```
 
-## Collaborate with your team
+## 使用方法
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+查看帮助：
 
-## Test and Deploy
+```bash
+safecode --help
+safecode auth --help
+safecode demo --help
+```
 
-Use the built-in continuous integration in GitLab.
+管理 API Key：
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
+```bash
+safecode auth set
+safecode auth status
+safecode auth clear
+```
 
-***
+运行一个包含 `task.yaml` 的工作区：
 
-# Editing this README
+```bash
+safecode run --workspace <path>
+safecode run --workspace <path> --mock
+```
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+`run` 支持的常用选项：
 
-## Suggestions for a good README
+```bash
+safecode run --workspace <path> --max-iterations 5
+safecode run --workspace <path> --model qwen3.7-max
+safecode run --workspace <path> --timeout 300
+safecode run --workspace <path> --keep-session
+```
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+查看和运行内置 demo：
 
-## Name
-Choose a self-explaining name for your project.
+```bash
+safecode demo list
+safecode demo run guardrail_block --mock
+safecode demo run fix_bug --mock
+safecode demo run complete_function --mock
+```
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+启动 WebUI：
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+```bash
+safecode serve --host 0.0.0.0 --port 8000
+```
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+启动后访问本机的 `http://localhost:8000/`，可以选择 demo 并以 mock 或 real 模式运行。
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+## API Key 配置
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+真实 LLM 模式需要 API Key。推荐使用系统 keyring：
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+```bash
+safecode auth set
+safecode auth status
+```
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+`status` 只会显示 `configured` 或 `missing`，不会输出真实 Key。
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+也可以使用环境变量：
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+```bash
+SAFECODE_API_KEY=<your-api-key>
+SAFECODE_BASE_URL=https://njusehub.info/v1
+SAFECODE_MODEL=qwen3.7-max
+```
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+配置优先级由当前实现决定：
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+- API Key：keyring → `SAFECODE_API_KEY` → 当前目录 `.env` 中的 `SAFECODE_API_KEY`
+- 运行时配置：CLI 参数 → `SAFECODE_*` 环境变量 → `config.yaml` → 内置默认值
 
-## License
-For open source projects, say how it is licensed.
+Docker 中通常没有可用的系统 keyring，因此真实模式应通过环境变量注入：
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+```bash
+docker run --rm -p 8000:8000 \
+  -e SAFECODE_API_KEY=<your-api-key> \
+  -e SAFECODE_BASE_URL=https://njusehub.info/v1 \
+  -e SAFECODE_MODEL=qwen3.7-max \
+  safecode-harness
+```
+
+Render 部署时，在 Render Dashboard 中配置环境变量。`SAFECODE_API_KEY` 应作为 secret 配置，不要写入代码、镜像或 `render.yaml` 明文。
+
+## 分发与部署
+
+构建 Docker 镜像：
+
+```bash
+docker build -t safecode-harness .
+```
+
+运行 WebUI：
+
+```bash
+docker run --rm -p 8000:8000 safecode-harness
+```
+
+验证首页：
+
+```bash
+curl http://localhost:8000/
+```
+
+在容器中查看 demo：
+
+```bash
+docker run --rm safecode-harness safecode demo list
+```
+
+使用 docker compose：
+
+```bash
+docker compose up --build
+```
+
+Render 部署步骤：
+
+1. 将仓库连接到 Render。
+2. 使用仓库中的 `render.yaml` 创建 Web Service。
+3. 确认 runtime 使用 Docker，并指向仓库根目录的 `Dockerfile`。
+4. 在 Render Dashboard 中配置 `SAFECODE_API_KEY`、`SAFECODE_BASE_URL`、`SAFECODE_MODEL`。
+5. 部署完成后访问 Render 提供的服务地址，首页健康检查路径为 `/`。
+
+已知限制：
+
+- 本项目不是生产级沙箱。
+- Docker 非 root 用户、临时工作区和 Guardrail 是防护层，但不能替代容器隔离、VM 隔离或操作系统权限隔离。
+- 对真实不可信代码，应在容器、VM 或低权限账户中运行。
+
+## 架构说明
+
+SafeCode Harness 使用 Pipeline Architecture。核心执行链路如下：
+
+```text
+Session
+  ↓
+Context Builder
+  ↓
+LLM Backend
+  ↓
+Action Parser
+  ↓
+Guardrail
+  ↓
+Tool Dispatcher
+  ↓
+Tool Executor
+  ↓
+ToolResult / TestFeedback / GuardrailEvent
+  ↓
+StopController
+```
+
+模块地图：
+
+- `safecode/core`：AgentLoop、StopController、SessionManager、WorkspaceManager 等核心编排。
+- `safecode/guardrail`：PathGuard、SensitiveFileGuard、ShellGuard 和 Guardrail 编排器。
+- `safecode/tools`：Tool 抽象类、ToolDispatcher、文件工具、测试工具和 shell 工具。
+- `safecode/feedback`：TestFeedbackSummarizer，解析 pytest 输出并生成反馈摘要。
+- `safecode/context`：ContextBuilder 和 MemoryManager。
+- `safecode/llm`：LLMBackend 抽象接口、RealLLM、MockLLM、LLM factory。
+- `safecode/config`：TaskConfigLoader 和 ConfigurationManager。
+- `safecode/auth`：CredentialManager。
+- `safecode/cli`：`safecode auth`、`run`、`demo`、`serve`。
+- `safecode/webui`：FastAPI + Jinja2 的轻量 WebUI。
+- `safecode/demos`：内置演示任务。
+
+## 安全说明
+
+威胁模型：
+
+- LLM 可能输出错误、危险或越权 action。
+- 任务代码可能包含测试失败、文件访问、shell 命令等交互。
+- 用户可能在真实模式中配置 API Key。
+
+凭据来源：
+
+- 首选系统 keyring：`safecode auth set` 使用 keyring 保存 API Key。
+- 环境变量：`SAFECODE_API_KEY` 适合 CI、Docker、Render。
+- `.env`：仅作为本地兜底来源，不应提交到仓库。
+
+Guardrail 机制：
+
+- `path_outside_workspace`：拦截 `../`、绝对路径、指向工作区外部的符号链接。
+- `sensitive_file_access`：拦截 `.env`、`.env.*`、`*.key`、`*.pem`、`secrets.json`、`id_rsa`、`.git/config`。
+- `dangerous_shell_command`：拦截危险 shell 命令，并要求 `run_shell` 命令匹配 allowlist。
+
+安全边界声明：
+
+- SafeCode Harness 是课程级 Coding Agent Harness，不提供强隔离安全沙箱。
+- Guardrail 是代码层治理机制，不能保证覆盖所有攻击或逃逸方式。
+- 真实不可信代码必须放在容器、VM 或低权限系统账户中运行。
+- 不要把真实 API Key、私钥、密码或敏感数据写入 demo、测试、日志、README 或 Git 历史。
+
+## 开发与测试
+
+运行完整测试：
+
+```bash
+python -m pytest -q -p no:cacheprovider
+```
+
+运行机制演示测试：
+
+```bash
+python -m pytest tests/demo/ -q -p no:cacheprovider
+```
+
+运行覆盖率：
+
+```bash
+python -m pytest --cov=safecode --cov-report=term --cov-report=html -p no:cacheprovider
+```
+
+覆盖率 HTML 报告会生成到 `htmlcov/`。
+
+CI：
+
+- 仓库包含 `.gitlab-ci.yml`。
+- CI 运行单元测试和基础质量验证。
+- Mock-only 测试不需要 API Key、真实 LLM 或网络访问。
+
+## 目录结构
+
+```text
+.
+├── safecode/
+│   ├── auth/              # API Key 凭据管理
+│   ├── cli/               # Typer CLI
+│   ├── config/            # task.yaml 与运行时配置
+│   ├── context/           # ContextBuilder 与 session trace
+│   ├── core/              # AgentLoop、SessionManager、停止条件、工作区
+│   ├── demos/             # 内置演示任务
+│   ├── feedback/          # pytest 反馈解析
+│   ├── guardrail/         # 路径、敏感文件、shell 护栏
+│   ├── llm/               # RealLLM、MockLLM、Backend factory
+│   ├── models/            # 核心 dataclass / enum 类型
+│   ├── tools/             # Tool 基类、Dispatcher、内置工具
+│   └── webui/             # FastAPI WebUI、模板和静态文件
+├── tests/                 # 单元测试、集成测试、demo 机制测试
+├── Dockerfile             # WebUI Docker 镜像
+├── docker-compose.yml     # 本地 compose 部署
+├── render.yaml            # Render Docker Web Service 配置
+├── Procfile               # 非 Docker 启动命令
+├── pyproject.toml         # 项目依赖、入口和测试配置
+├── SPEC.md                # 项目规格
+├── PLAN.md                # 实现计划
+└── README.md              # 本文档
+```
+
+## 内置演示 Demos
+
+查看 demo：
+
+```bash
+safecode demo list
+```
+
+### guardrail_block
+
+展示 Guardrail 拦截危险动作。MockLLM 依次尝试危险 shell、敏感文件访问和路径逃逸，Harness 返回结构化 `GuardrailEvent`，最终达到护栏阈值并终止。
+
+运行：
+
+```bash
+safecode demo run guardrail_block --mock
+```
+
+### fix_bug
+
+展示测试反馈闭环。初始 `calculator.add` 有 bug，第一次 `run_tests` 失败；MockLLM 随后执行 `edit_file` 修复代码，再次运行测试后通过。
+
+运行：
+
+```bash
+safecode demo run fix_bug --mock
+```
+
+### complete_function
+
+展示合法文件操作与测试反馈协同。MockLLM 先列出文件、读取函数骨架、补全 `add` 函数，再运行测试并成功结束。
+
+运行：
+
+```bash
+safecode demo run complete_function --mock
+```
+
+也可以直接运行 demo 机制测试：
+
+```bash
+python -m pytest tests/demo/ -q -p no:cacheprovider
+```
+
+## License and Authors
+
+本项目是 AI4SE 课程项目，用于展示 Coding Agent Harness 的实现、验证与演示。
+
+当前尚未指定开源许可证。
