@@ -2351,3 +2351,62 @@
   - Task 8.2 代码与配置层面验收通过
   - Docker build/run 需在 Docker Desktop 启动后手动补验
   - 等待 commit 和 Merge Request
+
+## 2026-7-13 Task 4.8.3 完成 Render 云部署配置
+
+- Superpowers：
+  - using-git-worktrees
+  - test-driven-development
+  - verification-before-completion
+
+- 当前上下文：
+  - Task 8.1 已完成 Demo 任务定义
+  - Task 8.2 已完成 Docker WebUI 部署配置
+  - 本任务在独立 worktree 完成：
+    - branch: task/8.3-render-config
+
+- 人工决策：
+  - 使用 Codex 创建 Render 部署配置
+  - 只创建 render.yaml 和 Procfile
+  - 不进行实际 Render 部署
+  - 不修改 README、WebUI、CLI、Dockerfile 或核心逻辑
+
+- AI辅助实现：
+  - 创建：
+    - render.yaml
+    - Procfile
+
+  - 新增测试：
+    - tests/test_render_config.py
+
+  - 实现：
+    - Render Web Service Blueprint
+    - Docker runtime / Dockerfile 构建配置
+    - healthCheckPath: /
+    - SAFECODE_API_KEY 使用 sync: false，不写入真实值
+    - SAFECODE_BASE_URL / SAFECODE_MODEL 环境变量声明
+    - Procfile 使用 safecode serve --host 0.0.0.0 --port ${PORT:-8000}
+
+  - 使用 TDD：
+    - RED：render.yaml 和 Procfile 不存在导致测试失败
+    - GREEN：创建 Render 配置文件后测试通过
+
+- 验证结果：
+  - focused test:
+    - 7 passed
+
+  - full pytest:
+    - 317 passed
+
+- Render 手动部署验证步骤：
+  1. 在 Render 创建 Web Service，关联仓库
+  2. 使用 render.yaml Blueprint 或手动选择 Docker runtime
+  3. 设置 secret 环境变量 SAFECODE_API_KEY
+  4. 可选设置 SAFECODE_BASE_URL / SAFECODE_MODEL
+  5. 部署后访问 Render 公网 URL
+  6. 确认 GET / 返回 WebUI 首页
+  7. 使用 mock demo 验证可运行
+
+- 当前状态：
+  - Task 8.3 验收通过
+  - 等待 commit 和 Merge Request

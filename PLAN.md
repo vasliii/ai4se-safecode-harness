@@ -1481,7 +1481,7 @@ Can run in parallel with：（无）
 
 ---
 
-### Task 8.3：Render 云部署配置
+### Task 8.3：Render 云部署配置 （已完成 deploy: add render configuration）
 
 ### Goal
 创建 Render 部署配置，用于云可访问的 WebUI。

@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: safecode-harness
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    envVars:
+      - key: SAFECODE_API_KEY
+        sync: false
+      - key: SAFECODE_BASE_URL
+        value: https://njusehub.info/v1
+      - key: SAFECODE_MODEL
+        value: qwen3.7-max
