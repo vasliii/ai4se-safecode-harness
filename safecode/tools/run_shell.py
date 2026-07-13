@@ -54,12 +54,12 @@ class RunShellTool(Tool):
                 stderr=completed.stderr,
                 command=command,
             )
-            if self._is_unknown_command(completed.stdout, completed.stderr):
+            if completed.returncode != 0:
                 return ToolResult(
                     tool=self.name,
                     success=False,
                     data=data,
-                    error=f"Command not found or not recognized: {command}",
+                    error=self._error_message(command, completed.returncode, completed.stdout, completed.stderr),
                 )
             return ToolResult(tool=self.name, success=True, data=data)
         except subprocess.TimeoutExpired as exc:
@@ -74,6 +74,16 @@ class RunShellTool(Tool):
     def _is_unknown_command(self, stdout: str, stderr: str) -> bool:
         output = f"{stdout}\n{stderr}".lower()
         return any(marker in output for marker in UNKNOWN_COMMAND_MARKERS)
+
+    def _error_message(self, command: str, exit_code: int, stdout: str, stderr: str) -> str:
+        if self._is_unknown_command(stdout, stderr):
+            return f"Command not found or not recognized: {command}"
+
+        summary = (stderr or stdout).strip()
+        if summary:
+            summary = summary.splitlines()[0]
+            return f"Command failed with exit code {exit_code}: {summary}"
+        return f"Command failed with exit code {exit_code}"
 
     def _result_data(
         self,

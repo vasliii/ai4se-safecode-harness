@@ -104,7 +104,9 @@ def test_run_shell_subprocess_options_and_data_shape(monkeypatch, tmp_path: Path
     assert seen["text"] is True
     assert seen["shell"] is True
     assert seen["timeout"] == 30
-    assert result.success is True
+    assert result.success is False
+    assert result.error is not None
+    assert "exit code 7" in result.error
     assert result.data == {
         "exit_code": 7,
         "stdout": "out",
