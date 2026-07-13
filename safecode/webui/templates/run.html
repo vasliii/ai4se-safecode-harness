@@ -1,0 +1,41 @@
+﻿{% extends "base.html" %}
+{% block title %}Run {{ demo.title }}{% endblock %}
+{% block content %}
+<section class="section-header">
+  <h1>{{ demo.title }}</h1>
+  <p class="demo-id">{{ demo.id }} · {{ demo.task_type }}</p>
+  <p>{{ demo.description }}</p>
+</section>
+<div class="actions">
+  <button data-mode="mock" onclick="startRun('mock')">Run (Mock)</button>
+  <button data-mode="real" onclick="startRun('real')">Run (Real)</button>
+</div>
+<section id="execution-trace" class="trace" aria-live="polite">
+  <h2>Execution Trace</h2>
+  <pre id="trace-output">No session started.</pre>
+</section>
+<script>
+let sessionId = null;
+async function startRun(mode) {
+  const output = document.getElementById('trace-output');
+  output.textContent = 'Starting ' + mode + ' run...';
+  const response = await fetch('/api/run/{{ demo.id }}', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({mode})
+  });
+  const data = await response.json();
+  sessionId = data.session_id;
+  renderStatus(data);
+}
+async function pollStatus() {
+  if (!sessionId) return;
+  const response = await fetch('/api/status/' + sessionId);
+  if (response.ok) renderStatus(await response.json());
+}
+function renderStatus(data) {
+  document.getElementById('trace-output').textContent = JSON.stringify(data, null, 2);
+}
+setInterval(pollStatus, 1500);
+</script>
+{% endblock %}
