@@ -12,4 +12,10 @@ def test_runtime_config_defaults():
     assert config.test_command == "pytest"
     assert config.context_budget_chars == 8000
     assert config.guardrail_threshold == 3
-    assert config.shell_allowlist == ["git diff", "git status", "python -m py_compile"]
+    assert config.shell_allowlist == [
+        "git diff",
+        "git status",
+        "python -m py_compile",
+        "pip install pytest",
+        "python -m pip install pytest",
+    ]

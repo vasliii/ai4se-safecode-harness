@@ -22,6 +22,10 @@ DANGEROUS_COMMAND_PATTERNS = (
     "mkfs",
     ":(){ :|:& };:",
 )
+EXACT_ALLOWLIST_COMMANDS = {
+    "pip install pytest",
+    "python -m pip install pytest",
+}
 
 
 class ShellGuard:
@@ -54,7 +58,14 @@ class ShellGuard:
         return command.startswith(pattern)
 
     def _is_allowed(self, command: str, allowlist: list[str]) -> bool:
-        return any(command.startswith(allowed) for allowed in allowlist)
+        for allowed in allowlist:
+            if allowed in EXACT_ALLOWLIST_COMMANDS:
+                if command == allowed:
+                    return True
+                continue
+            if command.startswith(allowed):
+                return True
+        return False
 
     def _blocked(self, command: str, reason_detail: str) -> GuardrailEvent:
         return GuardrailEvent(

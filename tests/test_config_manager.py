@@ -22,7 +22,13 @@ def test_load_uses_defaults_when_no_sources(tmp_path: Path, monkeypatch: pytest.
     assert config.test_command == "pytest"
     assert config.context_budget_chars == 8000
     assert config.guardrail_threshold == 3
-    assert config.shell_allowlist == ["git diff", "git status", "python -m py_compile"]
+    assert config.shell_allowlist == [
+        "git diff",
+        "git status",
+        "python -m py_compile",
+        "pip install pytest",
+        "python -m pip install pytest",
+    ]
 
 
 def test_config_yaml_overrides_defaults(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:

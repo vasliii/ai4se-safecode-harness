@@ -54,6 +54,10 @@ def test_system_prompt_contains_safety_and_json_action_requirements(tmp_path: Pa
     assert "run_tests" in prompt
     assert "edit_file" in prompt
     assert "finish" in prompt
+    assert "pytest is already available" in prompt
+    assert "do not install pytest before running tests" in prompt
+    assert "use the run_tests tool" in prompt
+    assert "only use run_shell" in prompt
     assert "workspace" in prompt
     assert "sensitive" in prompt
     assert ".env" in prompt

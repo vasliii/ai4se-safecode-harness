@@ -17,7 +17,13 @@ class RuntimeConfig:
     context_budget_chars: int = 8000
     guardrail_threshold: int = 3
     shell_allowlist: list[str] = field(
-        default_factory=lambda: ["git diff", "git status", "python -m py_compile"]
+        default_factory=lambda: [
+            "git diff",
+            "git status",
+            "python -m py_compile",
+            "pip install pytest",
+            "python -m pip install pytest",
+        ]
     )
 
     def to_dict(self) -> dict[str, Any]:
