@@ -2546,3 +2546,80 @@
 - 当前状态：
   - Task 9.2 验收通过
   - 等待 commit 和 Merge Request
+
+## 2026-7-13 Task 4.9.3 完成 README and Documentation
+
+- Superpowers：
+  - using-git-worktrees
+  - test-driven-development
+  - verification-before-completion
+
+- 当前上下文：
+  - Task 9.1 已完成完整测试与 coverage 验证
+  - Task 9.2 已完成 mock-only 机制演示脚本
+  - 本任务在独立 worktree 完成：
+    - branch: task/9.3-readme-documentation
+
+- 人工决策：
+  - 使用 Codex 用中文完善 README.md
+  - README 作为课程项目最终交付文档
+  - 不补充答辩专用演示流程
+  - 不修改源代码、测试、Docker、Render、Procfile、SPEC、PLAN 或 AGENT_LOG
+
+- AI辅助实现：
+  - 修改：
+    - README.md
+
+  - README 覆盖章节：
+    - 项目名称与简介
+    - 安装方式
+    - 使用方法
+    - API Key 配置
+    - 分发与部署
+    - 架构说明
+    - 安全说明
+    - 开发与测试
+    - 目录结构
+    - 内置演示 Demos
+    - License and Authors
+
+  - 文档内容：
+    - 说明 SafeCode Harness 是最小但完整的 Coding Agent Harness
+    - 说明 Pipeline Architecture
+    - 说明 Context Builder、LLM Backend、Action Parser、Guardrail、Tool Dispatcher、Tool Executor、StopController 的执行链路
+    - 说明 MockLLM 可用于无网络、无 API Key 的确定性验证
+    - 说明 API Key 可通过 keyring、环境变量和本地 `.env` 获取
+    - 说明 Docker 和 Render 部署方式
+    - 说明 Guardrail 的三类拦截：
+      - path_outside_workspace
+      - sensitive_file_access
+      - dangerous_shell_command
+    - 明确安全边界：
+      - 本项目不是生产级沙箱
+      - Guardrail 不能替代容器、VM 或系统权限隔离
+      - 真实不可信代码应在容器、VM 或低权限环境运行
+
+- 人工判断：
+  - README 命令与当前 CLI、Docker、Render、demo 实现保持一致
+  - 未写不存在的功能
+  - 未承诺生产级安全
+  - 未包含真实 API key、私钥或明显 secret
+  - License 未编造，已说明当前尚未指定开源许可证
+
+- 验证结果：
+  - CLI 相关测试：
+    - 24 passed
+
+  - Demo 测试：
+    - 3 passed
+
+  - full pytest：
+    - 320 passed
+
+  - Secret 检查：
+    - README secret 扫描无命中
+    - 未发现真实 API key、私钥或明显 secret
+
+- 当前状态：
+  - Task 9.3 验收通过
+  - 等待 commit 和 Merge Request
