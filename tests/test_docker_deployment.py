@@ -30,6 +30,12 @@ def test_dockerfile_uses_slim_python_base_and_installs_project_editable():
     assert "PIP_NO_CACHE_DIR=1" in text
 
 
+def test_dockerfile_installs_pytest_for_demo_test_execution():
+    text = dockerfile_text()
+
+    assert "pip install -e .[dev]" in text or "pip install pytest" in text
+
+
 def test_dockerfile_serves_webui_on_expected_host_and_port():
     text = dockerfile_text()
 

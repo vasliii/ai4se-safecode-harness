@@ -1,134 +1,141 @@
 # SafeCode Harness
 
-SafeCode Harness 是一个面向软件工程任务的最小但完整的 Coding Agent Harness。它让 LLM 在受控工作区中通过结构化 action 调用工具、读取反馈、接受护栏检查，并最终完成代码任务。
+SafeCode Harness 是一个受控的 Coding Agent Harness，不是普通聊天机器人。它让 LLM 在隔离工作区中通过结构化 JSON action 调用工具，并由 Harness 负责解析、拦截、执行和停止判断。
 
-本项目不是普通聊天式 AI 应用。它的核心价值在于 Harness 侧的确定性机制：Pipeline Architecture、Action Parser、Guardrail、Tool Dispatcher、Test Feedback、Context Builder、Memory Trace、Configuration 和 CLI/WebUI。真实 LLM 只是其中一个后端；MockLLM 用于离线、确定性地验证同一套执行机制。
+核心执行闭环是：
 
-项目重点展示：
+```text
+Context Builder
+  -> LLM
+  -> Action Parser
+  -> Guardrail
+  -> Tool Dispatcher
+  -> run_tests / 文件工具 / shell 工具
+  -> Test Feedback
+  -> Stop Controller
+```
 
-- 确定性 Guardrail：路径逃逸、敏感文件访问、危险 shell 命令由代码拦截。
-- 测试反馈闭环：`run_tests` 输出被解析为结构化 `TestFeedback`，回灌到下一轮上下文。
-- 上下文管理：每轮 LLM 调用由 `ContextBuilder` 构造受预算约束的 `ContextPayload`。
-- MockLLM 验证：不依赖真实网络、真实 LLM 或 API Key，也能复现核心机制。
+也就是说，SafeCode Harness 不只是“把问题发给模型”。它会把任务、历史步骤、测试反馈、护栏事件和工作区信息组织成上下文，让 LLM 输出一个工具 action；然后 Harness 用确定性代码解析 action、检查安全规则、执行工具、读取 pytest 结果，并决定是否继续下一轮或结束。
 
-## 安装方式
+SafeCode Harness 面向代码修复、函数补全和测试驱动修改任务。一次任务通常包含这些步骤：
 
-前置要求：
+1. Context Builder 构造 LLM 输入上下文。
+2. LLM 返回一个 JSON action。
+3. Action Parser 解析并校验 action。
+4. Guardrail 拦截路径逃逸、敏感文件访问和危险 shell 命令。
+5. Tool Dispatcher 执行文件读取、文件编辑、测试运行等工具。
+6. run_tests 执行 pytest，并将输出交给 Test Feedback Summarizer。
+7. Stop Controller 根据测试是否通过、最大轮数、护栏阻断次数等条件决定是否停止。
 
-- Python 3.10+
-- Git
-- 可选：Docker Desktop 或兼容 Docker 环境
+这种设计把“智能决策”交给 LLM，把“执行边界、工具调用、反馈解析、安全治理”放在 Harness 中实现。
 
-安装：
+## 项目功能
+
+### 网页版演示页面中 Mock 模式与 Real 模式的区别与共同点
+
+Mock 模式：
+
+- 使用 MockLLM，不调用真实 LLM。
+- 不需要 API Key，不消耗额度。
+
+Real 模式：
+
+- 使用真实 LLM API。
+- 需要配置 API Key。
+- 会消耗模型调用额度。
+
+共同点：
+
+- 均可执行内置的3份demo演示，并验证机制正确。
+
+### 普通用户如何用 SafeCode 修复或补全自己的 Python 项目
+
+使用 CLI 来完成自己的项目。完整流程如下：
 
 ```bash
 git clone https://git.nju.edu.cn/241880139/ai4se-safecode-harness.git
 cd ai4se-safecode-harness
-python -m pip install -e .
-```
-
-开发环境可安装测试依赖：
-
-```bash
-python -m pip install -e .[dev]
-```
-
-安装后应能看到 CLI：
-
-```bash
+python -m pip install -e ".[dev]"
 safecode --help
 ```
 
-## 使用方法
-
-查看帮助：
-
-```bash
-safecode --help
-safecode auth --help
-safecode demo --help
-```
-
-管理 API Key：
+配置真实 LLM API Key：
 
 ```bash
 safecode auth set
 safecode auth status
-safecode auth clear
 ```
 
-运行一个包含 `task.yaml` 的工作区：
+进入你自己的任务目录。这个目录应包含待完成代码、测试文件和 `task.yaml`：
 
 ```bash
-safecode run --workspace <path>
-safecode run --workspace <path> --mock
+cd /path/to/your/python/task
 ```
 
-`run` 支持的常用选项：
+以下面的模板为例创建 `task.yaml`：
+
+```yaml
+id: fix_my_python_bug
+title: "Fix my Python bug"
+task_type: fix_bug
+description: "Fix the failing pytest tests in this project. Read the code, make the smallest correct change, run tests, and finish only after tests pass."
+workspace_template: .
+test_command: pytest
+max_iterations: 10
+timeout_seconds: 300
+allowed_tools:
+  - list_files
+  - read_file
+  - search_content
+  - edit_file
+  - write_file
+  - run_tests
+  - run_shell
+```
+
+运行 Real 模式：
 
 ```bash
-safecode run --workspace <path> --max-iterations 5
-safecode run --workspace <path> --model qwen3.7-max
-safecode run --workspace <path> --timeout 300
-safecode run --workspace <path> --keep-session
+safecode run --workspace . --keep-session
 ```
 
-查看和运行内置 demo：
+`--keep-session` 会保留 SafeCode 创建的临时 session workspace。运行结束后，根据 CLI 输出的 session workspace 路径检查完成的代码，再手动复制、diff 或合并回你的原项目。
+
+如果只是验证 CLI 路径，不想调用真实 LLM，可以运行：
 
 ```bash
-safecode demo list
-safecode demo run guardrail_block --mock
-safecode demo run fix_bug --mock
-safecode demo run complete_function --mock
+safecode run --workspace . --mock --keep-session
 ```
 
-启动 WebUI：
+但要注意：Mock 模式不会智能修复你的任意代码，它主要用于机制演示和测试。
+
+### 网页版内置 demo 演示页面
+
+网页版 demo 演示页面主要用于运行内置 demo 和查看 Execution Trace。它可以展示每一步 action、工具结果、测试状态和护栏事件。
+
+当前限制：
+
+- 网页版 demo 演示页面不是完整的在线上传项目平台。
+- 网页版 demo 演示页面当前主要面向 `safecode/demos/` 下的内置 demo。
+- 修复自己的代码请使用 CLI：`safecode run --workspace . --keep-session`。
+
+本地启动：
 
 ```bash
 safecode serve --host 0.0.0.0 --port 8000
 ```
 
-启动后访问本机的 `http://localhost:8000/`，可以选择 demo 并以 mock 或 real 模式运行。
+访问：
 
-## API Key 配置
-
-真实 LLM 模式需要 API Key。推荐使用系统 keyring：
-
-```bash
-safecode auth set
-safecode auth status
+```text
+http://localhost:8000/
 ```
 
-`status` 只会显示 `configured` 或 `missing`，不会输出真实 Key。
+### Docker / Render 分发
 
-也可以使用环境变量：
+Docker 镜像用于一键启动 WebUI，并包含内置 demo 和 pytest 环境。
 
-```bash
-SAFECODE_API_KEY=<your-api-key>
-SAFECODE_BASE_URL=https://njusehub.info/v1
-SAFECODE_MODEL=qwen3.7-max
-```
-
-配置优先级由当前实现决定：
-
-- API Key：keyring → `SAFECODE_API_KEY` → 当前目录 `.env` 中的 `SAFECODE_API_KEY`
-- 运行时配置：CLI 参数 → `SAFECODE_*` 环境变量 → `config.yaml` → 内置默认值
-
-Docker 中通常没有可用的系统 keyring，因此真实模式应通过环境变量注入：
-
-```bash
-docker run --rm -p 8000:8000 \
-  -e SAFECODE_API_KEY=<your-api-key> \
-  -e SAFECODE_BASE_URL=https://njusehub.info/v1 \
-  -e SAFECODE_MODEL=qwen3.7-max \
-  safecode-harness
-```
-
-Render 部署时，在 Render Dashboard 中配置环境变量。`SAFECODE_API_KEY` 应作为 secret 配置，不要写入代码、镜像或 `render.yaml` 明文。
-
-## 分发与部署
-
-构建 Docker 镜像：
+构建镜像：
 
 ```bash
 docker build -t safecode-harness .
@@ -140,205 +147,185 @@ docker build -t safecode-harness .
 docker run --rm -p 8000:8000 safecode-harness
 ```
 
-验证首页：
+访问：
 
-```bash
-curl http://localhost:8000/
+```text
+http://localhost:8000/
 ```
 
-在容器中查看 demo：
+真实 LLM 模式需要通过环境变量传入 API Key：
 
 ```bash
-docker run --rm safecode-harness safecode demo list
+docker run --rm -p 8000:8000 \
+  -e SAFECODE_API_KEY="<your-api-key>" \
+  -e SAFECODE_BASE_URL="https://njusehub.info/v1" \
+  -e SAFECODE_MODEL="qwen3.7-max" \
+  safecode-harness
 ```
 
-使用 docker compose：
+也可以使用 docker compose：
 
 ```bash
 docker compose up --build
 ```
 
-Render 部署步骤：
+Render 部署使用仓库中的 `render.yaml` 和 `Dockerfile`。在 Render Dashboard 中配置：
 
-1. 将仓库连接到 Render。
-2. 使用仓库中的 `render.yaml` 创建 Web Service。
-3. 确认 runtime 使用 Docker，并指向仓库根目录的 `Dockerfile`。
-4. 在 Render Dashboard 中配置 `SAFECODE_API_KEY`、`SAFECODE_BASE_URL`、`SAFECODE_MODEL`。
-5. 部署完成后访问 Render 提供的服务地址，首页健康检查路径为 `/`。
+- `SAFECODE_API_KEY`：作为 secret 配置，不要写入仓库。
+- `SAFECODE_BASE_URL`
+- `SAFECODE_MODEL`
 
-已知限制：
+部署后访问 Render 提供的 URL；本地 Docker 访问地址仍是 `http://localhost:8000/`。
 
-- 本项目不是生产级沙箱。
-- Docker 非 root 用户、临时工作区和 Guardrail 是防护层，但不能替代容器隔离、VM 隔离或操作系统权限隔离。
-- 对真实不可信代码，应在容器、VM 或低权限账户中运行。
+## 安装方式
+
+推荐安装开发依赖，因为 CLI、demo 和 Docker 内部测试工具都依赖 pytest：
+
+```bash
+git clone https://git.nju.edu.cn/241880139/ai4se-safecode-harness.git
+cd ai4se-safecode-harness
+python -m pip install -e ".[dev]"
+```
+
+确认安装：
+
+```bash
+safecode --help
+python -m pytest --version
+```
+
+## CLI 常用命令
+
+认证：
+
+```bash
+safecode auth set
+safecode auth status
+safecode auth clear
+```
+
+运行任务：
+
+```bash
+safecode run --workspace <path>
+safecode run --workspace <path> --mock
+safecode run --workspace <path> --keep-session
+safecode run --workspace <path> --max-iterations 5
+safecode run --workspace <path> --timeout 300
+safecode run --workspace <path> --model qwen3.7-max
+```
+
+Demo：
+
+```bash
+safecode demo list
+safecode demo run fix_bug --mock
+safecode demo run fix_bug
+```
+
+WebUI：
+
+```bash
+safecode serve --host 0.0.0.0 --port 8000
+```
+
+## API Key 配置
+
+Real 模式需要 API Key。推荐使用系统 keyring：
+
+```bash
+safecode auth set
+```
+
+也可以使用环境变量：
+
+```bash
+SAFECODE_API_KEY="<your-api-key>"
+SAFECODE_BASE_URL="https://njusehub.info/v1"
+SAFECODE_MODEL="qwen3.7-max"
+```
+
+API Key 获取优先级：
+
+1. 系统 keyring
+2. 环境变量 `SAFECODE_API_KEY`
+3. 当前目录 `.env` 文件中的 `SAFECODE_API_KEY`
+
+不要把真实 API Key 写入 README、测试、demo、日志、Dockerfile、`render.yaml` 或 Git 历史。
 
 ## 架构说明
 
-SafeCode Harness 使用 Pipeline Architecture。核心执行链路如下：
-
 ```text
 Session
-  ↓
-Context Builder
-  ↓
-LLM Backend
-  ↓
-Action Parser
-  ↓
-Guardrail
-  ↓
-Tool Dispatcher
-  ↓
-Tool Executor
-  ↓
-ToolResult / TestFeedback / GuardrailEvent
-  ↓
-StopController
+  -> Context Builder
+  -> LLMBackend
+  -> ActionParser
+  -> Guardrail
+  -> ToolDispatcher
+  -> ToolResult / TestFeedback / GuardrailEvent
+  -> StopController
 ```
 
-模块地图：
+关键模块：
 
-- `safecode/core`：AgentLoop、StopController、SessionManager、WorkspaceManager 等核心编排。
-- `safecode/guardrail`：PathGuard、SensitiveFileGuard、ShellGuard 和 Guardrail 编排器。
-- `safecode/tools`：Tool 抽象类、ToolDispatcher、文件工具、测试工具和 shell 工具。
-- `safecode/feedback`：TestFeedbackSummarizer，解析 pytest 输出并生成反馈摘要。
-- `safecode/context`：ContextBuilder 和 MemoryManager。
-- `safecode/llm`：LLMBackend 抽象接口、RealLLM、MockLLM、LLM factory。
-- `safecode/config`：TaskConfigLoader 和 ConfigurationManager。
-- `safecode/auth`：CredentialManager。
-- `safecode/cli`：`safecode auth`、`run`、`demo`、`serve`。
-- `safecode/webui`：FastAPI + Jinja2 的轻量 WebUI。
-- `safecode/demos`：内置演示任务。
-
-## 安全说明
-
-威胁模型：
-
-- LLM 可能输出错误、危险或越权 action。
-- 任务代码可能包含测试失败、文件访问、shell 命令等交互。
-- 用户可能在真实模式中配置 API Key。
-
-凭据来源：
-
-- 首选系统 keyring：`safecode auth set` 使用 keyring 保存 API Key。
-- 环境变量：`SAFECODE_API_KEY` 适合 CI、Docker、Render。
-- `.env`：仅作为本地兜底来源，不应提交到仓库。
-
-Guardrail 机制：
-
-- `path_outside_workspace`：拦截 `../`、绝对路径、指向工作区外部的符号链接。
-- `sensitive_file_access`：拦截 `.env`、`.env.*`、`*.key`、`*.pem`、`secrets.json`、`id_rsa`、`.git/config`。
-- `dangerous_shell_command`：拦截危险 shell 命令，并要求 `run_shell` 命令匹配 allowlist。
-
-安全边界声明：
-
-- SafeCode Harness 是课程级 Coding Agent Harness，不提供强隔离安全沙箱。
-- Guardrail 是代码层治理机制，不能保证覆盖所有攻击或逃逸方式。
-- 真实不可信代码必须放在容器、VM 或低权限系统账户中运行。
-- 不要把真实 API Key、私钥、密码或敏感数据写入 demo、测试、日志、README 或 Git 历史。
-
-## 开发与测试
-
-运行完整测试：
-
-```bash
-python -m pytest -q -p no:cacheprovider
-```
-
-运行机制演示测试：
-
-```bash
-python -m pytest tests/demo/ -q -p no:cacheprovider
-```
-
-运行覆盖率：
-
-```bash
-python -m pytest --cov=safecode --cov-report=term --cov-report=html -p no:cacheprovider
-```
-
-覆盖率 HTML 报告会生成到 `htmlcov/`。
-
-CI：
-
-- 仓库包含 `.gitlab-ci.yml`。
-- CI 运行单元测试和基础质量验证。
-- Mock-only 测试不需要 API Key、真实 LLM 或网络访问。
+- `safecode/core`：AgentLoop、SessionManager、WorkspaceManager、StopController。
+- `safecode/context`：ContextBuilder、MemoryManager。
+- `safecode/llm`：LLMBackend、RealLLM、MockLLM、factory。
+- `safecode/core/action_parser.py`：解析 LLM 返回的 JSON action。
+- `safecode/guardrail`：路径、敏感文件和 shell 命令护栏。
+- `safecode/tools`：文件工具、测试工具、shell 工具和 ToolDispatcher。
+- `safecode/feedback`：pytest 输出解析和测试反馈摘要。
+- `safecode/config`：task.yaml 和运行时配置加载。
+- `safecode/cli`：命令行入口。
+- `safecode/webui`：FastAPI + Jinja2 WebUI。
+- `safecode/demos`：内置 demo 任务。
 
 ## 目录结构
 
 ```text
 .
 ├── safecode/
-│   ├── auth/              # API Key 凭据管理
-│   ├── cli/               # Typer CLI
-│   ├── config/            # task.yaml 与运行时配置
-│   ├── context/           # ContextBuilder 与 session trace
-│   ├── core/              # AgentLoop、SessionManager、停止条件、工作区
-│   ├── demos/             # 内置演示任务
-│   ├── feedback/          # pytest 反馈解析
-│   ├── guardrail/         # 路径、敏感文件、shell 护栏
-│   ├── llm/               # RealLLM、MockLLM、Backend factory
-│   ├── models/            # 核心 dataclass / enum 类型
-│   ├── tools/             # Tool 基类、Dispatcher、内置工具
-│   └── webui/             # FastAPI WebUI、模板和静态文件
-├── tests/                 # 单元测试、集成测试、demo 机制测试
-├── Dockerfile             # WebUI Docker 镜像
-├── docker-compose.yml     # 本地 compose 部署
-├── render.yaml            # Render Docker Web Service 配置
-├── Procfile               # 非 Docker 启动命令
-├── pyproject.toml         # 项目依赖、入口和测试配置
-├── SPEC.md                # 项目规格
-├── PLAN.md                # 实现计划
-└── README.md              # 本文档
+│   ├── auth/
+│   ├── cli/
+│   ├── config/
+│   ├── context/
+│   ├── core/
+│   ├── demos/
+│   ├── feedback/
+│   ├── guardrail/
+│   ├── llm/
+│   ├── models/
+│   ├── tools/
+│   └── webui/
+├── tests/
+├── Dockerfile
+├── docker-compose.yml
+├── render.yaml
+├── Procfile
+├── pyproject.toml
+├── SPEC.md
+├── PLAN.md
+└── README.md
 ```
 
-## 内置演示 Demos
+## 安全边界说明
 
-查看 demo：
+SafeCode Harness 是课程级和实验级 Coding Agent Harness，不是生产级安全沙箱。
 
-```bash
-safecode demo list
-```
+它提供的安全机制包括：
 
-### guardrail_block
+- PathGuard：阻止访问 workspace 外的路径。
+- SensitiveFileGuard：阻止访问 `.env`、`*.key`、`*.pem`、`secrets.json`、`id_rsa`、`.git/config` 等敏感文件。
+- ShellGuard：阻止危险 shell 命令，并限制 `run_shell` 到 allowlist。
+- 临时 workspace：任务在复制出的工作区中运行，不直接修改原项目。
 
-展示 Guardrail 拦截危险动作。MockLLM 依次尝试危险 shell、敏感文件访问和路径逃逸，Harness 返回结构化 `GuardrailEvent`，最终达到护栏阈值并终止。
+限制：
 
-运行：
-
-```bash
-safecode demo run guardrail_block --mock
-```
-
-### fix_bug
-
-展示测试反馈闭环。初始 `calculator.add` 有 bug，第一次 `run_tests` 失败；MockLLM 随后执行 `edit_file` 修复代码，再次运行测试后通过。
-
-运行：
-
-```bash
-safecode demo run fix_bug --mock
-```
-
-### complete_function
-
-展示合法文件操作与测试反馈协同。MockLLM 先列出文件、读取函数骨架、补全 `add` 函数，再运行测试并成功结束。
-
-运行：
-
-```bash
-safecode demo run complete_function --mock
-```
-
-也可以直接运行 demo 机制测试：
-
-```bash
-python -m pytest tests/demo/ -q -p no:cacheprovider
-```
+- 不能保证拦截所有恶意代码或所有 shell 绕过方式。
+- 不替代 Docker、VM、低权限用户或操作系统级隔离。
+- 对真实不可信项目，应在容器、VM 或低权限环境中运行。
+- Real 模式会调用真实 LLM，不保证一定修复所有 bug。
 
 ## License and Authors
 
-本项目是 AI4SE 课程项目，用于展示 Coding Agent Harness 的实现、验证与演示。
-
-当前尚未指定开源许可证。
+本项目是 AI4SE 课程项目，用于展示 Coding Agent Harness 的实现、验证和演示

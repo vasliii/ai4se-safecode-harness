@@ -10,7 +10,7 @@ COPY pyproject.toml README.md ./
 COPY safecode ./safecode
 
 RUN python -m pip install --upgrade pip \
-    && python -m pip install -e . \
+    && python -m pip install -e .[dev] \
     && rm -rf /root/.cache/pip \
     && useradd --create-home --shell /usr/sbin/nologin safecode \
     && chown -R safecode:safecode /app

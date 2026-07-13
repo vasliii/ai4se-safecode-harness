@@ -21,6 +21,12 @@ def test_dockerfile_defines_webui_image():
     assert 'CMD ["safecode", "serve", "--host", "0.0.0.0", "--port", "8000"]' in content
 
 
+def test_dockerfile_installs_pytest_for_run_tests_tool():
+    content = DOCKERFILE.read_text(encoding="utf-8")
+
+    assert "pip install -e .[dev]" in content or "pip install pytest" in content
+
+
 def test_dockerignore_excludes_build_noise_and_secrets():
     assert DOCKERIGNORE.exists(), ".dockerignore must exist"
     entries = set(read_lines(DOCKERIGNORE))
