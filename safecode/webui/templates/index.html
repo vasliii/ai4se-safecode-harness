@@ -1,0 +1,24 @@
+﻿{% extends "base.html" %}
+{% block title %}SafeCode Demos{% endblock %}
+{% block content %}
+<section class="section-header">
+  <h1>Demo Tasks</h1>
+</section>
+<div class="demo-list">
+  {% for demo in demos %}
+  <article class="demo-card">
+    <div>
+      <h2>{{ demo.title }}</h2>
+      <p class="demo-id">{{ demo.id }} · {{ demo.task_type }}</p>
+      <p>{{ demo.description }}</p>
+    </div>
+    <div class="actions">
+      <a class="button" href="/run/{{ demo.id }}?mode=mock">Run (Mock)</a>
+      <a class="button secondary" href="/run/{{ demo.id }}?mode=real">Run (Real)</a>
+    </div>
+  </article>
+  {% else %}
+  <p>No demos found.</p>
+  {% endfor %}
+</div>
+{% endblock %}

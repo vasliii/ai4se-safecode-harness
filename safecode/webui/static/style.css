@@ -1,0 +1,83 @@
+﻿:root {
+  color-scheme: light;
+  font-family: Arial, sans-serif;
+  background: #f7f8fa;
+  color: #20242a;
+}
+body {
+  margin: 0;
+}
+.topbar {
+  background: #20242a;
+  color: white;
+  padding: 14px 24px;
+}
+.brand {
+  color: white;
+  text-decoration: none;
+  font-weight: 700;
+}
+.page {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 28px 20px;
+}
+.section-header {
+  margin-bottom: 20px;
+}
+.demo-list {
+  display: grid;
+  gap: 14px;
+}
+.demo-card {
+  background: white;
+  border: 1px solid #dde2e8;
+  border-radius: 8px;
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
+.demo-id {
+  color: #59616d;
+  font-size: 0.92rem;
+}
+.actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.button,
+button {
+  background: #0f766e;
+  color: white;
+  border: 0;
+  border-radius: 6px;
+  padding: 9px 12px;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+.button.secondary,
+button[data-mode="real"] {
+  background: #334155;
+}
+.trace {
+  margin-top: 24px;
+  background: white;
+  border: 1px solid #dde2e8;
+  border-radius: 8px;
+  padding: 18px;
+}
+.trace pre {
+  overflow: auto;
+  background: #111827;
+  color: #f8fafc;
+  padding: 14px;
+  border-radius: 6px;
+}
+.guardrail {
+  color: #b91c1c;
+  font-weight: 700;
+}

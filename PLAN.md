@@ -1321,7 +1321,7 @@ Can run in parallel with：Task 7.3
 
 ---
 
-### Task 7.3：WebUI
+### Task 7.3：WebUI （已完成 feat: implement fastapi webui）
 
 ### Goal
 使用 FastAPI + Jinja2 实现轻量级 WebUI，支持选择和运行 demo 任务并观察执行轨迹。

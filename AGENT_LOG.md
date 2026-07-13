@@ -2093,3 +2093,84 @@
 - 当前状态：
   - Task 7.2 验收通过
   - 等待 commit 和 Merge Request
+
+## 2026-7-13 Task 4.7.3 完成 WebUI 实现
+
+- Superpowers：
+  - using-git-worktrees
+  - test-driven-development
+  - verification-before-completion
+
+- 当前上下文：
+  - Phase 6 已完成：
+    - Credential Manager
+    - RealLLM Backend
+    - MockLLM Backend
+    - LLM Backend Factory
+  - Phase 7 已完成：
+    - Task 7.1 CLI Auth 命令
+    - Task 7.2 CLI Run / Demo 命令
+  - 本任务在独立 worktree 完成：
+    - branch: task/7.3-webui
+
+- 人工决策：
+  - 使用 Codex 实现轻量 WebUI
+  - 使用 FastAPI + Jinja2 + 原生 HTML/CSS
+  - WebUI 只面向 demo 演示和执行轨迹展示
+  - WebUI session 使用内存 dict，不做持久化
+  - 不实现 safecode serve
+  - 不实现 CLI serve 命令
+  - 不实现 Docker、Render、README、登录、项目管理、文件在线编辑
+  - 不修改 RealLLM、MockLLM 或 SessionManager
+
+- AI辅助实现：
+  - 创建：
+    - safecode/webui/__init__.py
+    - safecode/webui/app.py
+    - safecode/webui/templates/base.html
+    - safecode/webui/templates/index.html
+    - safecode/webui/templates/run.html
+    - safecode/webui/static/style.css
+
+  - 新增测试：
+    - tests/test_webui.py
+
+  - 实现：
+    - FastAPI WebUI app
+    - Jinja2Templates 页面渲染
+    - GET /
+    - GET /run/{demo_id}
+    - POST /api/run/{demo_id}
+    - GET /api/status/{session_id}
+    - 内存 session 状态管理
+
+  - 支持：
+    - 首页展示 demo 列表
+    - demo 运行页面
+    - mock / real API 启动
+    - mock 模式不检查真实 API key
+    - real 模式 API key 缺失时提示 safecode auth set
+    - session_id / final_status / step_count / steps 返回
+    - session 状态轮询
+    - demo 不存在返回 404
+    - invalid mode 返回错误
+    - 基础 HTML/CSS 页面
+    - 护栏事件和执行轨迹展示
+    - 不泄露 API Key
+
+  - 使用 TDD：
+    - RED：新增 tests/test_webui.py 后，因 safecode.webui 模块不存在失败
+    - GREEN：实现 WebUI app、模板、静态样式和 API 后通过测试
+    - 修正测试导入方式
+    - 更新 TemplateResponse 调用以消除弃用警告
+
+- 验证结果：
+  - focused test:
+    - 10 passed
+
+  - full pytest:
+    - 291 passed
+
+- 当前状态：
+  - Task 7.3 验收通过
+  - 等待 commit 和 Merge Request
