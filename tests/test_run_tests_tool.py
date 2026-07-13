@@ -1,6 +1,7 @@
 ﻿from __future__ import annotations
 
 import subprocess
+import sys
 from pathlib import Path
 
 from safecode.models import Session, TaskConfig
@@ -124,7 +125,7 @@ def test_run_tests_nonstandard_exit_code_preserves_output(monkeypatch, tmp_path:
 
     result = RunTestsTool().execute({}, make_session(tmp_path))
 
-    assert seen["command"] == ["pytest"]
+    assert seen["command"] == [sys.executable, "-m", "pytest"]
     assert seen["cwd"] == tmp_path
     assert seen["capture_output"] is True
     assert seen["text"] is True
