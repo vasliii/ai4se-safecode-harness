@@ -1237,7 +1237,7 @@ Can run in parallel with：（无）
 
 ## Phase 7：CLI 和 WebUI
 
-### Task 7.1：CLI——Auth 命令
+### Task 7.1：CLI——Auth 命令 （已完成 feat: implement cli auth commands）
 
 ### Goal
 实现 `safecode auth` 子命令：`set`、`status`、`clear`。
