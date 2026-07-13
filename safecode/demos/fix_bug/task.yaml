@@ -1,0 +1,34 @@
+﻿id: fix_bug
+title: "Fix calculator.add bug"
+task_type: fix_bug
+description: "Fix src/calculator.py so add returns the sum and all calculator tests pass."
+workspace_template: .
+test_command: pytest
+max_iterations: 8
+timeout_seconds: 180
+allowed_files:
+  - src/calculator.py
+  - tests/test_calculator.py
+read_only_files:
+  - tests/test_calculator.py
+allowed_tools:
+  - list_files
+  - read_file
+  - edit_file
+  - run_tests
+forbidden_tools:
+  - run_shell
+success_criteria:
+  - pytest_passes
+  - calculator_add_returns_sum
+expected_final_files:
+  - src/calculator.py
+  - tests/test_calculator.py
+mock_scenario: fix_bug_feedback_loop
+demo_visible: true
+demo_order: 2
+expected_trace_events:
+  - run_tests_failed
+  - feedback_generated
+  - edit_file_applied
+  - tests_passed
