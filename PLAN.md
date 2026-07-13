@@ -1514,7 +1514,7 @@ Can run in parallel with：（无）
 
 ## Phase 9：最终验证与文档
 
-### Task 9.1：全量 Pytest 套件与覆盖率
+### Task 9.1：全量 Pytest 套件与覆盖率 （已完成 test: verify full suite and coverage）
 
 ### Goal
 运行完整测试套件，确保所有测试通过，验证核心 harness 模块覆盖率 ≥ 80%。

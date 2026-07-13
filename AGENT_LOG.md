@@ -2410,3 +2410,62 @@
 - 当前状态：
   - Task 8.3 验收通过
   - 等待 commit 和 Merge Request
+
+## 2026-7-13 Task 4.9.1 完成 Full Pytest Suite and Coverage 验证
+
+- Superpowers：
+  - using-git-worktrees
+  - test-driven-development
+  - verification-before-completion
+
+- 当前上下文：
+  - Phase 8 已完成：
+    - Demo 任务定义
+    - Docker 部署配置
+    - Render 云部署配置
+  - 进入 Phase 9 最终测试与交付验证
+  - 本任务在独立 worktree 完成：
+    - branch: task/9.1-full-test-coverage
+
+- 人工决策：
+  - 使用 Codex 执行完整测试和 coverage 验证
+  - 本任务只做验证
+  - 不修改代码、配置、PLAN.md 或 AGENT_LOG.md
+
+- AI辅助执行：
+  - 执行完整 pytest：
+    - python -m pytest -q -p no:cacheprovider
+
+  - 执行 coverage：
+    - python -m pytest --cov=safecode --cov-report=term --cov-report=html -p no:cacheprovider
+
+  - 检查 mock-only 测试：
+    - 未发现真实网络依赖
+    - 未发现真实 LLM 依赖
+    - 未发现真实 API key 依赖
+
+- 验证结果：
+  - full pytest:
+    - 317 passed
+
+  - coverage:
+    - TOTAL: 1822 stmts, 139 miss, 92% coverage
+
+  - 核心模块覆盖率：
+    - safecode/core/: 95%
+    - safecode/guardrail/: 98%
+    - safecode/feedback/: 97%
+    - safecode/tools/: 93%
+    - safecode/llm/: 92%
+    - safecode/context/: 87%
+    - safecode/config/: 87%
+
+  - coverage 产物：
+    - htmlcov/index.html 已生成
+    - .coverage 已生成
+    - 均为测试产物，未进入 git status
+
+- 当前状态：
+  - Task 9.1 验收通过
+  - 无代码或配置修改
+  - 等待记录验证结果并提交空提交或按项目要求跳过代码提交
