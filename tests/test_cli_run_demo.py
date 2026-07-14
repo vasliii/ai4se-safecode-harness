@@ -129,6 +129,20 @@ def test_run_workspace_mock_uses_mock_backend_and_outputs_final_status(tmp_path,
     assert "step 0" in result.output
     assert "action: finish" in result.output
     assert "tool_result: finish success=True" in result.output
+    assert "Session workspace kept at" not in result.output
+
+
+def test_run_keep_session_outputs_session_workspace_path(tmp_path, monkeypatch):
+    reset_fakes()
+    patch_run_dependencies(monkeypatch)
+    write_task_yaml(tmp_path)
+
+    result = CliRunner().invoke(app, ["run", "--workspace", str(tmp_path), "--mock", "--keep-session"])
+
+    assert result.exit_code == 0
+    assert "Session workspace kept at:" in result.output
+    assert str(tmp_path) in result.output
+    assert "copy changes back to your original project" in result.output
 
 
 def test_run_applies_cli_overrides(tmp_path, monkeypatch):

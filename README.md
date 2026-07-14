@@ -55,18 +55,33 @@ Real 模式：
 ```bash
 git clone https://git.nju.edu.cn/241880139/ai4se-safecode-harness.git
 cd ai4se-safecode-harness
-python -m pip install -e ".[dev]"
-safecode --help
+python -m pip install -e ".[dev]" #推荐使用官方源https://pypi.org/simple
+safecode --help #验证安装成功
 ```
 
-配置真实 LLM API Key：
+配置真实 LLM API Key。默认情况下，SafeCode 使用课程平台 Token Hub 的 OpenAI 兼容接口：
+
+- `SAFECODE_BASE_URL`: `https://njusehub.info/v1`
+- `SAFECODE_MODEL`: `qwen3.7-max`
+
+因此本地 Real 模式默认需要使用 `https://njusehub.info/keys` 中生成的 API Key。若使用其他平台的 API Key，需要同时通过环境变量覆盖 `SAFECODE_BASE_URL` 和 `SAFECODE_MODEL`。
+
+默认模式下用户仅需：
 
 ```bash
-safecode auth set
-safecode auth status
+safecode auth set #输入已有的API密钥，考虑到安全性，输入时不会显示在命令行中，可直接复制
+safecode auth status #查看当前API密钥配置状态
 ```
 
-进入你自己的任务目录。这个目录应包含待完成代码、测试文件和 `task.yaml`：
+若使用其他 OpenAI 兼容平台的API Key，可在运行前设置环境变量：
+
+```bash
+$env:SAFECODE_API_KEY="your-api-key"
+$env:SAFECODE_BASE_URL="https://your-openai-compatible-endpoint/v1"
+$env:SAFECODE_MODEL="your-model-name"
+```
+
+**然后在同一个命令行窗口中**，进入你自己的任务目录。这个目录应包含待完成代码、测试文件和 `task.yaml`：
 
 ```bash
 cd /path/to/your/python/task
@@ -78,7 +93,7 @@ cd /path/to/your/python/task
 id: fix_my_python_bug
 title: "Fix my Python bug"
 task_type: fix_bug
-description: "Fix the failing pytest tests in this project. Read the code, make the smallest correct change, run tests, and finish only after tests pass."
+description: "Fix the failing pytest tests in this project. Read the code, make the smallest correct change, run tests, and finish only after tests pass." #请尽量详细，以便LLM理解调用何种工具
 workspace_template: .
 test_command: pytest
 max_iterations: 10
@@ -160,7 +175,7 @@ safecode run --workspace <path> --model qwen3.7-max
 
 ## API Key 配置
 
-Real 模式需要 API Key。推荐使用系统 keyring：
+Real 模式需要 API Key。推荐使用系统 keyring，此方式下默认使用课程平台 Token Hub 的 OpenAI 兼容接口：`SAFECODE_BASE_URL`: `https://njusehub.info/v1`，`SAFECODE_MODEL`: `qwen3.7-max`
 
 ```bash
 safecode auth set

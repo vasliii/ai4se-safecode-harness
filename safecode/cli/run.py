@@ -87,6 +87,7 @@ def run_task_config(
     )
     session = SessionManager(config, llm_backend).run(task_config, keep_session=keep_session)
     print_session_trace(session)
+    print_session_workspace_hint(session, keep_session=keep_session)
     return session
 
 
@@ -111,6 +112,18 @@ def print_session_trace(session: Session) -> None:
         if step.guardrail_result is not None:
             typer.echo(f"  guardrail: {step.guardrail_result.reason}")
     typer.echo(f"final_status: {_status_value(session.final_status)}")
+
+
+def print_session_workspace_hint(session: Session, *, keep_session: bool) -> None:
+    """Print where users can inspect modified files when the workspace is kept."""
+    if not keep_session:
+        return
+
+    typer.echo("")
+    typer.echo("Session workspace kept at:")
+    typer.echo(str(session.workspace_root))
+    typer.echo("")
+    typer.echo("You can inspect the modified files there and copy changes back to your original project.")
 
 
 def _task_path_for_workspace(workspace: Path) -> Path:
