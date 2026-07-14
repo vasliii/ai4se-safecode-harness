@@ -1,4 +1,4 @@
-# SafeCode Harness （网页版演示页面仅供 demo 演示，真正使用该项目请使用命令行）
+# SafeCode Harness （该产品仅适用于 Python 项目；网页版演示页面仅供 demo 演示，真正使用该产品请使用命令行）
 
 SafeCode Harness 是一个受控的 Coding Agent Harness，不是普通聊天机器人。它让 LLM 在隔离工作区中通过结构化 JSON action 调用工具，并由 Harness 负责解析、拦截、执行和停止判断。
 
@@ -197,6 +197,39 @@ API Key 获取优先级：
 
 不要把真实 API Key 写入 README、task.yaml、Dockerfile、render.yaml、测试文件、日志或 Git 历史。
 
+## Docker 运行 WebUI
+
+本项目提供 Dockerfile，可通过 Docker 一键构建并运行网页版 demo 演示页面。该方式适合验收或演示 WebUI，不需要在本机手动安装 Python 依赖。
+
+构建镜像：
+
+```bash
+docker build --no-cache -t safecode-harness .
+```
+
+启动 WebUI：
+
+```bash
+docker run --rm -p 8000:8000 safecode-harness
+```
+
+访问地址：
+
+```bash
+http://localhost:8000/
+```
+
+如果需要在 WebUI 中使用 Real 模式，需要通过环境变量传入 API 配置：
+
+```bash
+docker run --rm -p 8000:8000 -e SAFECODE_API_KEY="<your-api-key>" -e SAFECODE_BASE_URL="https://njusehub.info/v1" -e SAFECODE_MODEL="qwen3.7-max" safecode-harness
+```
+
+网页版 demo 演示页面地址：
+
+```text
+https://safecode-harness.onrender.com/
+```
 ## 架构说明
 
 ```text
