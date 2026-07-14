@@ -1,4 +1,4 @@
-# SafeCode Harness
+# SafeCode Harness （网页版演示页面仅供 demo 演示，真正使用该项目请使用命令行）
 
 SafeCode Harness 是一个受控的 Coding Agent Harness，不是普通聊天机器人。它让 LLM 在隔离工作区中通过结构化 JSON action 调用工具，并由 Harness 负责解析、拦截、执行和停止判断。
 
@@ -91,6 +91,7 @@ allowed_tools:
   - write_file
   - run_tests
   - run_shell
+  - finish
 ```
 
 运行 Real 模式：
@@ -109,73 +110,15 @@ safecode run --workspace . --mock --keep-session
 
 但要注意：Mock 模式不会智能修复你的任意代码，它主要用于机制演示和测试。
 
-### 网页版内置 demo 演示页面
+### 网页版内置 demo 演示页面 （https://safecode-harness.onrender.com/）
 
 网页版 demo 演示页面主要用于运行内置 demo 和查看 Execution Trace。它可以展示每一步 action、工具结果、测试状态和护栏事件。
 
-当前限制：
+注意：
 
 - 网页版 demo 演示页面不是完整的在线上传项目平台。
 - 网页版 demo 演示页面当前主要面向 `safecode/demos/` 下的内置 demo。
-- 修复自己的代码请使用 CLI：`safecode run --workspace . --keep-session`。
-
-本地启动：
-
-```bash
-safecode serve --host 0.0.0.0 --port 8000
-```
-
-访问：
-
-```text
-http://localhost:8000/
-```
-
-### Docker / Render 分发
-
-Docker 镜像用于一键启动 WebUI，并包含内置 demo 和 pytest 环境。
-
-构建镜像：
-
-```bash
-docker build -t safecode-harness .
-```
-
-运行 WebUI：
-
-```bash
-docker run --rm -p 8000:8000 safecode-harness
-```
-
-访问：
-
-```text
-http://localhost:8000/
-```
-
-真实 LLM 模式需要通过环境变量传入 API Key：
-
-```bash
-docker run --rm -p 8000:8000 \
-  -e SAFECODE_API_KEY="<your-api-key>" \
-  -e SAFECODE_BASE_URL="https://njusehub.info/v1" \
-  -e SAFECODE_MODEL="qwen3.7-max" \
-  safecode-harness
-```
-
-也可以使用 docker compose：
-
-```bash
-docker compose up --build
-```
-
-Render 部署使用仓库中的 `render.yaml` 和 `Dockerfile`。在 Render Dashboard 中配置：
-
-- `SAFECODE_API_KEY`：作为 secret 配置，不要写入仓库。
-- `SAFECODE_BASE_URL`
-- `SAFECODE_MODEL`
-
-部署后访问 Render 提供的 URL；本地 Docker 访问地址仍是 `http://localhost:8000/`。
+- 完成自己的代码请使用 CLI：`safecode run --workspace . --keep-session`。
 
 ## 安装方式
 
@@ -215,20 +158,6 @@ safecode run --workspace <path> --timeout 300
 safecode run --workspace <path> --model qwen3.7-max
 ```
 
-Demo：
-
-```bash
-safecode demo list
-safecode demo run fix_bug --mock
-safecode demo run fix_bug
-```
-
-WebUI：
-
-```bash
-safecode serve --host 0.0.0.0 --port 8000
-```
-
 ## API Key 配置
 
 Real 模式需要 API Key。推荐使用系统 keyring：
@@ -241,8 +170,8 @@ safecode auth set
 
 ```bash
 SAFECODE_API_KEY="<your-api-key>"
-SAFECODE_BASE_URL="https://njusehub.info/v1"
-SAFECODE_MODEL="qwen3.7-max"
+SAFECODE_BASE_URL="<your-base-url>"
+SAFECODE_MODEL="<your-model>"
 ```
 
 API Key 获取优先级：
@@ -251,7 +180,7 @@ API Key 获取优先级：
 2. 环境变量 `SAFECODE_API_KEY`
 3. 当前目录 `.env` 文件中的 `SAFECODE_API_KEY`
 
-不要把真实 API Key 写入 README、测试、demo、日志、Dockerfile、`render.yaml` 或 Git 历史。
+不要把真实 API Key 写入 README、task.yaml、Dockerfile、render.yaml、测试文件、日志或 Git 历史。
 
 ## 架构说明
 
@@ -317,7 +246,6 @@ SafeCode Harness 是课程级和实验级 Coding Agent Harness，不是生产级
 - PathGuard：阻止访问 workspace 外的路径。
 - SensitiveFileGuard：阻止访问 `.env`、`*.key`、`*.pem`、`secrets.json`、`id_rsa`、`.git/config` 等敏感文件。
 - ShellGuard：阻止危险 shell 命令，并限制 `run_shell` 到 allowlist。
-- 临时 workspace：任务在复制出的工作区中运行，不直接修改原项目。
 
 限制：
 
@@ -326,6 +254,6 @@ SafeCode Harness 是课程级和实验级 Coding Agent Harness，不是生产级
 - 对真实不可信项目，应在容器、VM 或低权限环境中运行。
 - Real 模式会调用真实 LLM，不保证一定修复所有 bug。
 
-## License and Authors
+## 整体说明
 
-本项目是 AI4SE 课程项目，用于展示 Coding Agent Harness 的实现、验证和演示
+本项目是 AI4SE 课程项目，用于展示 Coding Agent Harness 的实现、验证和演示。
